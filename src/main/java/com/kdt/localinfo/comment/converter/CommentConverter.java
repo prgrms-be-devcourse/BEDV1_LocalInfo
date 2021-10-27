@@ -15,7 +15,7 @@ public class CommentConverter {
     public Comment converterToComment(CommentSaveRequest commentSaveRequest, User user, Post post) {
         Comment comment = Comment.builder()
                 .contents(commentSaveRequest.getContents())
-                .parentId(commentSaveRequest.getParentCommentId())
+                .parentId(commentSaveRequest.getParentId())
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();

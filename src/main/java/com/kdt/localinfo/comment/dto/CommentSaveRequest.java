@@ -9,7 +9,7 @@ public class CommentSaveRequest {
     private Long userId;
     private Long postId;
     private String contents;
-    private Long parentCommentId;
+    private Long parentId;
 
     public CommentSaveRequest(Long userId, Long postId, String contents) {
         this.userId = userId;
