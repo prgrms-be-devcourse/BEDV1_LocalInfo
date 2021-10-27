@@ -7,13 +7,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@DynamicInsert
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,7 +19,6 @@ import java.util.Objects;
 @Entity
 @Table(name = "comments")
 public class Comment {
-
     @Id
     @GeneratedValue(generator = "COMMENT_ID_SEQ")
     private Long id;
@@ -39,19 +36,26 @@ public class Comment {
     @ColumnDefault("0")
     private Long parentId;
 
-    public void setPost(Post post){
-        if (Objects.nonNull(this.post)){
+    public void setPost(Post post) {
+        if (Objects.nonNull(this.post)) {
             this.post.getComments().remove(this);
         }
         this.post = post;
         post.getComments().add(this);
     }
 
-    public void setUser(User user){
-        if (Objects.nonNull(this.user)){
+    public void setUser(User user) {
+        if (Objects.nonNull(this.user)) {
             user.getComments().remove(this);
         }
         this.user = user;
         user.getComments().add(this);
+    }
+
+    @PrePersist
+    private void checkedParentId() {
+        if (parentId == null) {
+            parentId = 0L;
+        }
     }
 }
