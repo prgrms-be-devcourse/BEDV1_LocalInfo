@@ -13,5 +13,6 @@ public class CommentResponse {
     private String nickName;
     private LocalDateTime lastUpdatedAt;
     private String region;
+    private Long parentId;
     private Long depth;
 }
