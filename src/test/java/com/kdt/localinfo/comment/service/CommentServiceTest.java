@@ -8,6 +8,7 @@ import com.kdt.localinfo.post.entity.Post;
 import com.kdt.localinfo.post.repository.PostRepository;
 import com.kdt.localinfo.user.entity.User;
 import com.kdt.localinfo.user.repository.UserRepository;
+import javassist.NotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,12 +34,12 @@ class CommentServiceTest {
 
     @Test
     @Transactional
-    void saveTest() {
+    void saveTest() throws NotFoundException {
         User user = userRepository.findById(1L).orElseThrow();
         Post post = postRepository.findById(1L).orElseThrow();
 
-        CommentSaveRequest commentSaveRequest = new CommentSaveRequest(user.getId(), post.getId(), "안녕하세요 댓글입니다.");
-        CommentResponse commentResponse = commentService.save(commentSaveRequest);
+        CommentSaveRequest commentSaveRequest = new CommentSaveRequest(user.getId(), "안녕하세요 댓글입니다.");
+        CommentResponse commentResponse = commentService.save(commentSaveRequest, post.getId());
 
         Comment comment = commentRepository.findById(commentResponse.getId()).orElseThrow();
 

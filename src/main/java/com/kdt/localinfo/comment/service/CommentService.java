@@ -9,6 +9,7 @@ import com.kdt.localinfo.post.entity.Post;
 import com.kdt.localinfo.post.repository.PostRepository;
 import com.kdt.localinfo.user.entity.User;
 import com.kdt.localinfo.user.repository.UserRepository;
+import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,18 +33,16 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentResponse save(CommentSaveRequest commentSaveRequest) {
-        Long postId = commentSaveRequest.getPostId();
-        Post post = postRepository.findById(postId).orElseThrow(() -> new NoSuchElementException("게시물에 대한 정보를 찾을 수 없습니다."));
+    public CommentResponse save(CommentSaveRequest commentSaveRequest, Long postId) throws NotFoundException {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new NotFoundException("게시물에 대한 정보를 찾을 수 없습니다."));
 
         Long userId = commentSaveRequest.getUserId();
-        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("작성자 정보를 찾을 수 없습니다."));
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("작성자 정보를 찾을 수 없습니다."));
 
         Comment comment = commentConverter.converterToComment(commentSaveRequest, user, post);
 
         Comment commentEntity = commentRepository.save(comment);
 
-        CommentResponse commentResponse = commentConverter.converterToCommentResponse(commentEntity);
-        return commentResponse;
+        return commentConverter.converterToCommentResponse(commentEntity);
     }
 }

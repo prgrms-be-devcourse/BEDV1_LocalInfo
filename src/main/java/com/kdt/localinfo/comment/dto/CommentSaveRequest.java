@@ -7,13 +7,11 @@ import lombok.Getter;
 @AllArgsConstructor
 public class CommentSaveRequest {
     private Long userId;
-    private Long postId;
     private String contents;
     private Long parentId;
 
-    public CommentSaveRequest(Long userId, Long postId, String contents) {
+    public CommentSaveRequest(Long userId, String contents) {
         this.userId = userId;
-        this.postId = postId;
         this.contents = contents;
     }
 }
