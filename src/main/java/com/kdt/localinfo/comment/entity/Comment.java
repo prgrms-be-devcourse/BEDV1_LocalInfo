@@ -20,7 +20,7 @@ import java.util.Objects;
 @Table(name = "comments")
 public class Comment {
     @Id
-    @GeneratedValue(generator = "COMMENT_ID_SEQ")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String contents;
     private LocalDateTime createdAt;

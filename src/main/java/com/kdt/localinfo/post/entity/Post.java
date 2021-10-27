@@ -24,11 +24,11 @@ public class Post {
     @OneToMany(mappedBy = "post")
     private final List<Comment> comments = new ArrayList<>();
 
-    @OneToMany
+    @OneToMany()
     private final List<Photo> photos = new ArrayList<>();
 
     @Id
-    @GeneratedValue(generator = "POST_ID_SEQ")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String contents;
 

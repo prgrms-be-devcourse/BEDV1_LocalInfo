@@ -1,15 +1,12 @@
 package com.kdt.localinfo.post.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "photos")
 public class Photo {
     @Id
-    @GeneratedValue(generator = "PHOTO_SEQ_ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String url;
 }

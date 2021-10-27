@@ -25,8 +25,7 @@ public class User {
     private final List<Comment> comments = new ArrayList<>();
 
     @Id
-    @GeneratedValue(generator = "USER_SEQ_ID")
-
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String nickName;
