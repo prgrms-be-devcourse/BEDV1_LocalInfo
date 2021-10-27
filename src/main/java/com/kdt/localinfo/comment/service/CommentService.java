@@ -1,6 +1,7 @@
 package com.kdt.localinfo.comment.service;
 
 import com.kdt.localinfo.comment.converter.CommentConverter;
+import com.kdt.localinfo.comment.dto.CommentResponse;
 import com.kdt.localinfo.comment.dto.CommentSaveRequest;
 import com.kdt.localinfo.comment.entity.Comment;
 import com.kdt.localinfo.comment.repository.CommentRepository;
@@ -31,7 +32,7 @@ public class CommentService {
     }
 
     @Transactional
-    public Long save(CommentSaveRequest commentSaveRequest) {
+    public CommentResponse save(CommentSaveRequest commentSaveRequest) {
         Long postId = commentSaveRequest.getPostId();
         Post post = postRepository.findById(postId).orElseThrow(() -> new NoSuchElementException("게시물에 대한 정보를 찾을 수 없습니다."));
 
@@ -42,6 +43,7 @@ public class CommentService {
 
         Comment commentEntity = commentRepository.save(comment);
 
-        return commentEntity.getId();
+        CommentResponse commentResponse = commentConverter.converterToCommentResponse(commentEntity);
+        return commentResponse;
     }
 }

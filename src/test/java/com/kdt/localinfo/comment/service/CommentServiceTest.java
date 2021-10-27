@@ -1,5 +1,6 @@
 package com.kdt.localinfo.comment.service;
 
+import com.kdt.localinfo.comment.dto.CommentResponse;
 import com.kdt.localinfo.comment.dto.CommentSaveRequest;
 import com.kdt.localinfo.comment.entity.Comment;
 import com.kdt.localinfo.comment.repository.CommentRepository;
@@ -37,9 +38,9 @@ class CommentServiceTest {
         Post post = postRepository.findById(1L).orElseThrow();
 
         CommentSaveRequest commentSaveRequest = new CommentSaveRequest(user.getId(), post.getId(), "안녕하세요 댓글입니다.");
-        Long commentId = commentService.save(commentSaveRequest);
+        CommentResponse commentResponse = commentService.save(commentSaveRequest);
 
-        Comment comment = commentRepository.findById(commentId).orElseThrow();
+        Comment comment = commentRepository.findById(commentResponse.getId()).orElseThrow();
 
         assertThat(comment.getId(), is(1L));
         assertThat(comment.getContents(), is("안녕하세요 댓글입니다."));

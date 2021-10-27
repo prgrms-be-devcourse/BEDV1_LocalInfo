@@ -1,5 +1,6 @@
 package com.kdt.localinfo.comment.converter;
 
+import com.kdt.localinfo.comment.dto.CommentResponse;
 import com.kdt.localinfo.comment.dto.CommentSaveRequest;
 import com.kdt.localinfo.comment.entity.Comment;
 import com.kdt.localinfo.post.entity.Post;
@@ -22,5 +23,9 @@ public class CommentConverter {
         comment.setPost(post);
         comment.setUser(user);
         return comment;
+    }
+
+    public CommentResponse converterToCommentResponse(Comment comment) {
+        return new CommentResponse(comment.getId(), comment.getContents(), comment.getUser().getNickName(), comment.getUpdatedAt(), comment.getUser().getRegion().getName(), comment.getParentId());
     }
 }
