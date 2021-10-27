@@ -9,6 +9,7 @@ import com.kdt.localinfo.post.repository.PostRepository;
 import com.kdt.localinfo.user.entity.User;
 import com.kdt.localinfo.user.repository.UserRepository;
 import javassist.NotFoundException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,6 +35,7 @@ class CommentServiceTest {
 
     @Test
     @Transactional
+    @DisplayName("댓글 생성")
     void saveTest() throws NotFoundException {
         User user = userRepository.findById(1L).orElseThrow();
         Post post = postRepository.findById(1L).orElseThrow();
@@ -49,5 +51,8 @@ class CommentServiceTest {
         assertThat(comment.getDeletedAt(), is(nullValue()));
         assertThat(comment.getUser(), is(user));
         assertThat(comment.getPost(), is(post));
+        assertThat(commentResponse.getDepth(), is(0L));
+        assertThat(commentResponse.getRegion(), is("행신동"));
+        assertThat(commentResponse.getNickName(), is("0kwon"));
     }
 }
