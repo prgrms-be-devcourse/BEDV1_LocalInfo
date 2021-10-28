@@ -24,7 +24,7 @@ public class Post {
     @OneToMany(mappedBy = "post")
     private final List<Comment> comments = new ArrayList<>();
 
-    @OneToMany()
+    @OneToMany
     private final List<Photo> photos = new ArrayList<>();
 
     @Id
