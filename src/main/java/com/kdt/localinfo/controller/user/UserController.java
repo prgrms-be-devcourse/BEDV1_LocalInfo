@@ -3,21 +3,23 @@ package com.kdt.localinfo.controller.user;
 import com.kdt.localinfo.commons.ErrorResources;
 import com.kdt.localinfo.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import java.net.URI;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/users", produces = MediaTypes.HAL_JSON_VALUE)
@@ -25,8 +27,8 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping
-    public ResponseEntity create(@RequestBody @Valid UserRequest request, Errors errors) {
+    @PostMapping(produces = MediaTypes.HAL_JSON_VALUE, consumes = MediaTypes.HAL_JSON_VALUE)
+    public ResponseEntity create(@RequestBody @Validated UserRequest request, Errors errors) {
         if (errors.hasErrors()) {
             return ResponseEntity.badRequest().body(ErrorResources.modelOf(errors));
         }
