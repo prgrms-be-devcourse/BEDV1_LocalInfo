@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
@@ -25,16 +26,20 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
-    @Column(name = "name", nullable = false, length = 30)
+    @Column(nullable = false, length = 30)
     private String name;
 
+    @Column(nullable = false, length = 30)
     private String nickname;
 
+    @Column(nullable = false, length = 30)
     private String email;
 
+    @Column(nullable = false, length = 30)
     private String password;
 
-    @Column(name = "created_at", columnDefinition = "TIMESTAMP", updatable = false)
+    @CreatedDate
+    @Column(name = "created_at", columnDefinition = "TIMESTAMP", updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
