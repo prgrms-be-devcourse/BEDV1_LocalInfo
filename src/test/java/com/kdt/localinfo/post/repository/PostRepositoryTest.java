@@ -1,7 +1,6 @@
 package com.kdt.localinfo.post.repository;
 
 import com.kdt.localinfo.post.Entity.Category;
-import com.kdt.localinfo.post.Entity.CategoryName;
 import com.kdt.localinfo.post.Entity.Post;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -22,8 +21,8 @@ class PostPersistenceTest {
     private EntityManagerFactory entityManagerFactory;
 
     @Test
-    @DisplayName("단방향 저장 테스트")
-    void testSave() {
+    @DisplayName("카테고리 저장 테스트")
+    void testSaveCategory() {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
 
@@ -37,6 +36,6 @@ class PostPersistenceTest {
         entityManager.clear();
 
         Post foundPost = entityManager.find(Post.class, 1L);
-        Assertions.assertThat(foundPost.getCategory().getName()).isEqualTo(CategoryName.동네맛집);
+        Assertions.assertThat(foundPost.getCategory().getName()).isEqualTo("우리동네질문");
     }
 }

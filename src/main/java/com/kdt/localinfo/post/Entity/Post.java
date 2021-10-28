@@ -3,7 +3,6 @@ package com.kdt.localinfo.post.Entity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -20,13 +19,13 @@ public class Post {
     private Long id;
 
     @Lob
-    @Column(name = "contents")
+    @Column(name = "contents", nullable = false)
     private String contents;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
 //    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -37,10 +36,9 @@ public class Post {
 //    private List<Comment> comments;
 
     @ManyToOne
-    @JoinColumn(name = "category_id", referencedColumnName = "id")
+    @JoinColumn(name = "category_id", referencedColumnName = "id", nullable = false)
     private Category category;
 
-    @Nullable
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
@@ -77,6 +75,7 @@ public class Post {
 //    public void addComment(Comment comment) {
 //        comment.setPost(this);
 //    }
+
     //연관관계 편의 메서드 - category
     public void setCategory(Category category) {
         this.category = category;

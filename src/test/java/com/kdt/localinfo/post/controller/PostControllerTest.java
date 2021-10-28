@@ -1,6 +1,5 @@
 package com.kdt.localinfo.post.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kdt.localinfo.post.Entity.Category;
 import com.kdt.localinfo.post.dto.PostDto;
@@ -15,10 +14,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import javax.transaction.Transactional;
-
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -60,6 +57,7 @@ class PostControllerTest {
 
         savedPostId = postService.createPost(postDto);
     }
+
     @Test
     void write() throws Exception {
         mockMvc.perform(post("/posts")
