@@ -1,6 +1,6 @@
 package com.kdt.localinfo.post.repository;
 
-import com.kdt.localinfo.post.Entity.Category;
+import com.kdt.localinfo.category.Category;
 import com.kdt.localinfo.post.Entity.Post;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

@@ -1,5 +1,6 @@
 package com.kdt.localinfo.post.Entity;
 
+import com.kdt.localinfo.category.Category;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
