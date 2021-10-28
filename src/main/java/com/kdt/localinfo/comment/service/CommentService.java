@@ -14,8 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.NoSuchElementException;
-
 @Slf4j
 @Service
 public class CommentService {
@@ -34,10 +32,12 @@ public class CommentService {
 
     @Transactional
     public CommentResponse save(CommentSaveRequest commentSaveRequest, Long postId) throws NotFoundException {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new NotFoundException("게시물에 대한 정보를 찾을 수 없습니다."));
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new NotFoundException("게시물에 대한 정보를 찾을 수 없습니다."));
 
         Long userId = commentSaveRequest.getUserId();
-        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("작성자 정보를 찾을 수 없습니다."));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("작성자 정보를 찾을 수 없습니다."));
 
         Comment comment = commentConverter.converterToComment(commentSaveRequest, user, post);
 
