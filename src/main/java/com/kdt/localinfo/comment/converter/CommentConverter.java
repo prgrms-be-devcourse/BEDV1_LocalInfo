@@ -1,5 +1,6 @@
 package com.kdt.localinfo.comment.converter;
 
+import com.kdt.localinfo.comment.dto.CommentDepth;
 import com.kdt.localinfo.comment.dto.CommentResponse;
 import com.kdt.localinfo.comment.dto.CommentSaveRequest;
 import com.kdt.localinfo.comment.entity.Comment;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 @Slf4j
 @Component
 public class CommentConverter {
+
     public Comment converterToComment(CommentSaveRequest commentSaveRequest, User user, Post post) {
         Comment comment = Comment.builder()
                 .contents(commentSaveRequest.getContents())
@@ -31,8 +33,8 @@ public class CommentConverter {
 
     private Long checkedCommentDepth(Long parentId) {
         if (parentId.equals(0L)) {
-            return 0L;
+            return CommentDepth.ZERO.getDepth();
         }
-        return 1L;
+        return CommentDepth.ONE.getDepth();
     }
 }
