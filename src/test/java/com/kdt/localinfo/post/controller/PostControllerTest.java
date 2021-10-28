@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -49,7 +50,7 @@ class PostControllerTest {
 
         postDto = PostDto.builder()
                 .id(1L)
-                .contents("this is sampel post")
+                .contents("this is sample post")
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .category(category)
@@ -63,7 +64,7 @@ class PostControllerTest {
         mockMvc.perform(post("/posts")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(postDto)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andDo(print());
     }
 }
