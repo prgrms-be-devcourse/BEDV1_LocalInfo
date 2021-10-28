@@ -74,6 +74,9 @@ class UserControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("id").exists())
                 .andExpect(header().exists(HttpHeaders.LOCATION))
+                .andExpect(jsonPath("_links.self").exists())
+                .andExpect(jsonPath("_links.delete").exists())
+                .andExpect(jsonPath("_links.edit").exists())
                 .andReturn();
 
         UserResponse userResponse = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), UserResponse.class);
