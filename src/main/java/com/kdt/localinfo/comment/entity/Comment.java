@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -33,7 +32,6 @@ public class Comment {
     @ManyToOne(fetch = FetchType.LAZY)
     private Post post;
 
-    @ColumnDefault("0")
     private Long parentId;
 
     public void setPost(Post post) {
@@ -50,12 +48,5 @@ public class Comment {
         }
         this.user = user;
         user.getComments().add(this);
-    }
-
-    @PrePersist
-    private void checkedParentId() {
-        if (parentId == null) {
-            parentId = 0L;
-        }
     }
 }

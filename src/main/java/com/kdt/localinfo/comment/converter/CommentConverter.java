@@ -32,7 +32,7 @@ public class CommentConverter {
     }
 
     private Long checkedCommentDepth(Long parentId) {
-        if (parentId.equals(0L)) {
+        if (parentId == null) {
             return CommentDepth.ZERO.getDepth();
         }
         return CommentDepth.ONE.getDepth();

@@ -1,7 +1,7 @@
 package com.kdt.localinfo.comment.dto;
 
 public enum CommentDepth {
-    ONE(0L), ZERO(1L);
+    ZERO(0L), ONE(1L);
 
     Long depth;
 
