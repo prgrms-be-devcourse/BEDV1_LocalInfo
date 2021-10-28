@@ -5,28 +5,30 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 public class UserRequest {
-    @NotNull
+    @NotEmpty
     private String name;
-    @NotNull
+    @NotEmpty
     private String nickname;
-    @NotNull
+    @NotEmpty
+    @Email
     private String email;
-    @NotNull
+    @NotEmpty
     private String password;
-    @NotNull
+    @NotEmpty
     private String role;
-    @NotNull
+    @NotEmpty
     private String neighborhood;
-    @NotNull
+    @NotEmpty
     private String district;
-    @NotNull
+    @NotEmpty
     private String city;
 
 }
