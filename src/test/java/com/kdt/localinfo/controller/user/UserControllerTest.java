@@ -74,9 +74,8 @@ class UserControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("id").exists())
                 .andExpect(header().exists(HttpHeaders.LOCATION))
-                .andExpect(jsonPath("roles").exists())
-                .andExpect(jsonPath("region").exists())
                 .andReturn();
+
         UserResponse userResponse = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), UserResponse.class);
         User savedUser = userRepository.findById(userResponse.getId()).orElse(null);
         assertAll(
@@ -84,4 +83,42 @@ class UserControllerTest {
                 () -> assertEquals(Objects.requireNonNull(savedUser).getName(), userRequest.getName())
         );
     }
+
+    @Test
+    @DisplayName("입력 값이 비어있는 경우에 에러가 발생하는 테스트")
+    public void createUserBadRequestEmptyInput() throws Exception {
+        UserRequest userRequest = UserRequest.builder().build();
+        this.mockMvc.perform(post(BASE_URL)
+                .contentType(MediaTypes.HAL_JSON_VALUE)
+                .content(this.objectMapper.writeValueAsString(userRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("errors[0].objectName").exists())
+                .andExpect(jsonPath("errors[0].field").exists())
+                .andExpect(jsonPath("errors[0].code").exists())
+                .andExpect(jsonPath("_links.index").exists());
+    }
+
+    @Test
+    @DisplayName("입력 값이 잘못된 경우에 에러가 발생하는 테스트")
+    public void createUserBadRequestWrongInput() throws Exception {
+        UserRequest userRequest = UserRequest.builder()
+                .name("심수현")
+                .nickname("")
+                .email("suhyun.com")
+                .password("1234")
+                .role("GENERAL")
+                .neighborhood("동천동")
+                .district("수지구")
+                .city("용인시")
+                .build();
+        this.mockMvc.perform(post(BASE_URL)
+                .contentType(MediaTypes.HAL_JSON_VALUE)
+                .content(this.objectMapper.writeValueAsString(userRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("errors[0].objectName").exists())
+                .andExpect(jsonPath("errors[0].field").exists())
+                .andExpect(jsonPath("errors[0].code").exists())
+                .andExpect(jsonPath("_links.index").exists());
+    }
+
 }
