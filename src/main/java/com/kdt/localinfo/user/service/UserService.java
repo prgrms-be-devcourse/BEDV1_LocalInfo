@@ -16,7 +16,7 @@ public class UserService {
 
     @Transactional
     public UserResponse addUser(UserRequest userRequest) {
-        User savedUser = userRepository.save(new User(userRequest));
+        User savedUser = userRepository.save(userRequest.toEntity());
         return new UserResponse(savedUser);
     }
 }

@@ -56,7 +56,7 @@ public class User {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    private Set<Role> roles;
+    private Set<Role> roles = new HashSet<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Post> posts;
@@ -64,29 +64,6 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Comment> comments;
 
-    public User(UserRequest userRequest) {
-        name = userRequest.getName();
-        nickname = userRequest.getNickname();
-        email = userRequest.getEmail();
-        password = userRequest.getPassword();
-        roles = setRole(userRequest);
-        region = setRegion(userRequest);
-        createdAt = LocalDateTime.now();
-    }
-
-    private Region setRegion(UserRequest userRequest) {
-        return region = Region.builder()
-                .neighborhood(userRequest.getNeighborhood())
-                .district(userRequest.getDistrict())
-                .city(userRequest.getCity())
-                .build();
-    }
-
-    private Set<Role> setRole(UserRequest userRequest) {
-        roles = new HashSet<>();
-        roles.add(Role.valueOf(userRequest.getRole()));
-        return roles;
-    }
 
 }
 
