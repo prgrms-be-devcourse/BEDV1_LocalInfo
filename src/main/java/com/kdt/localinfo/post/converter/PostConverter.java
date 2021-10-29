@@ -8,9 +8,11 @@ import org.springframework.stereotype.Component;
 public class PostConverter {
 
     public Post convertToPost(PostDto postDto) {
-        Post post = new Post(postDto.getId(), postDto.getContents(), postDto.getCreatedAt(), postDto.getUpdatedAt());
-//        post.setUser(postDto.getUser());
+        Post post = new Post(postDto.getId(), postDto.getContents(), postDto.getCreatedAt(), postDto.getUpdatedAt(),
+                postDto.getRegion(), postDto.getCategory(), postDto.getPhotos());
         post.setCategory(postDto.getCategory());
+//        post.setUser(postDto.getUser());
+
         return post;
     }
 
@@ -20,8 +22,10 @@ public class PostConverter {
                 .contents(post.getContents())
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
-                .category(post.getCategory())
                 .deletedAt(post.getDeletedAt())
+                .region(post.getRegion())
+                .category(post.getCategory())
+                .photos(post.getPhotos())
                 .build();
     }
 

@@ -1,11 +1,14 @@
 package com.kdt.localinfo.post.dto;
 
 import com.kdt.localinfo.category.Category;
+import com.kdt.localinfo.photo.Photo;
+import com.kdt.localinfo.region.Region;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -15,23 +18,31 @@ public class PostDto {
 
     private String contents;
 
+    private Region region;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
 
-//    private User user;
+    private LocalDateTime deletedAt;
 
     private Category category;
 
-    private LocalDateTime deletedAt;
+//    private User user;
+
+//    private Comment comment;
+
+    private List<Photo> photos;
 
     @Builder
-    public PostDto(Long id, String contents, LocalDateTime createdAt, LocalDateTime updatedAt, Category category, LocalDateTime deletedAt) {
+    public PostDto(Long id, String contents, Region region, LocalDateTime createdAt, LocalDateTime updatedAt, Category category, LocalDateTime deletedAt, List<Photo> photos) {
         this.id = id;
         this.contents = contents;
+        this.region = region;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.category = category;
         this.deletedAt = deletedAt;
+        this.photos = photos;
     }
 }

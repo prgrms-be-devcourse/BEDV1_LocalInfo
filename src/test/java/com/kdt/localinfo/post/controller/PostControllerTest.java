@@ -1,9 +1,11 @@
 package com.kdt.localinfo.post.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kdt.localinfo.region.Region;
 import com.kdt.localinfo.category.Category;
-import com.kdt.localinfo.post.dto.PostDto;
 import com.kdt.localinfo.category.CategoryRepository;
+import com.kdt.localinfo.photo.Photo;
+import com.kdt.localinfo.post.dto.PostDto;
 import com.kdt.localinfo.post.service.PostService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,12 +17,14 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Transactional
+//@Transactional
 @AutoConfigureMockMvc
 @SpringBootTest
 class PostControllerTest {
@@ -45,6 +49,12 @@ class PostControllerTest {
 
     @BeforeEach
     void saveSampleData() {
+        ArrayList<Photo> photos = new ArrayList<>();
+        Photo photo1 = new Photo("url1");
+        Photo photo2 = new Photo("url2");
+        photos.add(photo1);
+        photos.add(photo2);
+
         category = categoryRepository.findById(1L).get();
 
         postDto = PostDto.builder()
@@ -52,7 +62,14 @@ class PostControllerTest {
                 .contents("this is sample post")
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
+                .deletedAt(null)
+                .region(Region.builder()
+                        .city("city1")
+                        .district("district1")
+                        .neighborhood("neighborhood1")
+                        .build())
                 .category(category)
+                .photos(photos)
                 .build();
 
         savedPostId = postService.createPost(postDto);
