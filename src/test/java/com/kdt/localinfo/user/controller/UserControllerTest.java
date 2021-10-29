@@ -1,4 +1,4 @@
-package com.kdt.localinfo.user.controller.user;
+package com.kdt.localinfo.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kdt.localinfo.user.dto.UserRequest;
@@ -68,6 +68,7 @@ class UserControllerTest {
                 .district("수지구")
                 .city("용인시")
                 .build();
+        log.info("[*] request:{}", userRequest);
         MvcResult mvcResult = mockMvc.perform(post(BASE_URL)
                 .accept(MediaTypes.HAL_JSON_VALUE)
                 .contentType(MediaTypes.HAL_JSON_VALUE)
