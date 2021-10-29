@@ -1,6 +1,6 @@
 package com.kdt.localinfo.post.controller;
 
-import com.kdt.localinfo.post.ApiResponse;
+import com.kdt.localinfo.common.ApiResponse;
 import com.kdt.localinfo.post.dto.PostDto;
 import com.kdt.localinfo.post.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -28,7 +28,13 @@ public class CommentConverter {
     }
 
     public CommentResponse converterToCommentResponse(Comment comment) {
-        return new CommentResponse(comment.getId(), comment.getContents(), comment.getUser().getNickName(), comment.getUpdatedAt(), comment.getUser().getRegion().getName(), comment.getParentId(), checkedCommentDepth(comment.getParentId()));
+        return new CommentResponse(comment.getId(),
+                comment.getContents(),
+                comment.getUser().getNickname(),
+                comment.getUpdatedAt(),
+                comment.getUser().getRegion().getNeighborhood(),
+                comment.getParentId(),
+                checkedCommentDepth(comment.getParentId()));
     }
 
     private Long checkedCommentDepth(Long parentId) {

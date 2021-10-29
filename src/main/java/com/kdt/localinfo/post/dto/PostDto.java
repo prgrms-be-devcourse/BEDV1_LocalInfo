@@ -1,8 +1,10 @@
 package com.kdt.localinfo.post.dto;
 
 import com.kdt.localinfo.category.Category;
+import com.kdt.localinfo.comment.entity.Comment;
 import com.kdt.localinfo.photo.Photo;
-import com.kdt.localinfo.region.Region;
+import com.kdt.localinfo.user.entity.Region;
+import com.kdt.localinfo.user.entity.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,9 +30,9 @@ public class PostDto {
 
     private Category category;
 
-//    private User user;
+    private User user;
 
-//    private Comment comment;
+    private Comment comment;
 
     private List<Photo> photos;
 

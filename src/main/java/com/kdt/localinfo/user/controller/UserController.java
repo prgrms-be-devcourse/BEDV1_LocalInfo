@@ -1,6 +1,6 @@
 package com.kdt.localinfo.user.controller;
 
-import com.kdt.localinfo.commons.ErrorResources;
+import com.kdt.localinfo.common.ErrorResources;
 import com.kdt.localinfo.user.dto.UserRequest;
 import com.kdt.localinfo.user.dto.UserResponse;
 import com.kdt.localinfo.user.service.UserService;

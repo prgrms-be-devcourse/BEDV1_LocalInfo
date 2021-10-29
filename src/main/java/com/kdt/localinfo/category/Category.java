@@ -13,7 +13,7 @@ public class Category {
 
     @Id
     @GeneratedValue
-    @Column(name = "id")
+    @Column(name = "category_id")
     private Long id;
 
     @Column(name = "name", unique = true, nullable = false)

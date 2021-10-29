@@ -1,12 +1,12 @@
 package com.kdt.localinfo.post.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kdt.localinfo.region.Region;
 import com.kdt.localinfo.category.Category;
 import com.kdt.localinfo.category.CategoryRepository;
 import com.kdt.localinfo.photo.Photo;
 import com.kdt.localinfo.post.dto.PostDto;
 import com.kdt.localinfo.post.service.PostService;
+import com.kdt.localinfo.user.entity.Region;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +18,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-//@Transactional
+@Transactional
 @AutoConfigureMockMvc
 @SpringBootTest
 class PostControllerTest {
