@@ -1,4 +1,4 @@
-package com.kdt.localinfo.controller.user;
+package com.kdt.localinfo.user.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

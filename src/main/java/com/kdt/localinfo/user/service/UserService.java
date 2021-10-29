@@ -1,9 +1,9 @@
-package com.kdt.localinfo.service;
+package com.kdt.localinfo.user.service;
 
-import com.kdt.localinfo.controller.user.UserRequest;
-import com.kdt.localinfo.controller.user.UserResponse;
-import com.kdt.localinfo.model.User;
-import com.kdt.localinfo.repository.UserRepository;
+import com.kdt.localinfo.user.dto.UserRequest;
+import com.kdt.localinfo.user.dto.UserResponse;
+import com.kdt.localinfo.user.entity.User;
+import com.kdt.localinfo.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,6 +1,8 @@
-package com.kdt.localinfo.model;
+package com.kdt.localinfo.user.entity;
 
-import com.kdt.localinfo.controller.user.UserRequest;
+import com.kdt.localinfo.comment.entity.Comment;
+import com.kdt.localinfo.post.entity.Post;
+import com.kdt.localinfo.user.dto.UserRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,10 +17,10 @@ import java.util.List;
 import java.util.Set;
 
 @NoArgsConstructor
-@Getter
-@Entity
 @AllArgsConstructor
 @Builder
+@Getter
+@Entity
 public class User {
 
     @Id
@@ -87,3 +89,4 @@ public class User {
     }
 
 }
+

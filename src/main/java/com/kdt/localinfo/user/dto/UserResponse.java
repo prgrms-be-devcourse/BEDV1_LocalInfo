@@ -1,9 +1,9 @@
-package com.kdt.localinfo.controller.user;
+package com.kdt.localinfo.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.kdt.localinfo.model.Region;
-import com.kdt.localinfo.model.Role;
-import com.kdt.localinfo.model.User;
+import com.kdt.localinfo.user.entity.Region;
+import com.kdt.localinfo.user.entity.Role;
+import com.kdt.localinfo.user.entity.User;
 import lombok.*;
 
 import java.time.LocalDateTime;

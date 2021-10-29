@@ -1,4 +1,4 @@
-package com.kdt.localinfo.model;
+package com.kdt.localinfo.user.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

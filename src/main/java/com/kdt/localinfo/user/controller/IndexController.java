@@ -1,6 +1,5 @@
-package com.kdt.localinfo.controller;
+package com.kdt.localinfo.user.controller;
 
-import com.kdt.localinfo.controller.user.UserController;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

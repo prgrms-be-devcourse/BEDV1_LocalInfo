@@ -1,6 +1,6 @@
 package com.kdt.localinfo.commons;
 
-import com.kdt.localinfo.controller.IndexController;
+import com.kdt.localinfo.user.controller.IndexController;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.validation.Errors;
 

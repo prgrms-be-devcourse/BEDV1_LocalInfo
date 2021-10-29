@@ -1,4 +1,6 @@
-package com.kdt.localinfo.model;
+package com.kdt.localinfo.comment.entity;
+
+import com.kdt.localinfo.user.entity.User;
 
 import javax.persistence.*;
 

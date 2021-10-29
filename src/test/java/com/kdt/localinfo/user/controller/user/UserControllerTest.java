@@ -1,8 +1,10 @@
-package com.kdt.localinfo.controller.user;
+package com.kdt.localinfo.user.controller.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kdt.localinfo.model.User;
-import com.kdt.localinfo.repository.UserRepository;
+import com.kdt.localinfo.user.dto.UserRequest;
+import com.kdt.localinfo.user.dto.UserResponse;
+import com.kdt.localinfo.user.entity.User;
+import com.kdt.localinfo.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

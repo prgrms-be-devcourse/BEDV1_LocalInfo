@@ -1,7 +1,9 @@
-package com.kdt.localinfo.controller.user;
+package com.kdt.localinfo.user.controller;
 
 import com.kdt.localinfo.commons.ErrorResources;
-import com.kdt.localinfo.service.UserService;
+import com.kdt.localinfo.user.dto.UserRequest;
+import com.kdt.localinfo.user.dto.UserResponse;
+import com.kdt.localinfo.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.EntityModel;
