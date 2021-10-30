@@ -1,7 +1,6 @@
 package com.kdt.localinfo.post.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.kdt.localinfo.category.Category;
 import com.kdt.localinfo.comment.entity.Comment;
 import com.kdt.localinfo.photo.Photo;
@@ -56,41 +55,8 @@ public class Post {
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
     private User user;
 
-    @JsonManagedReference
     @OneToMany(mappedBy = "post")
     private List<Photo> photos = new ArrayList<>();
-
-    @Builder
-    public Post(String contents, Region region, Category category) {
-        this.contents = contents;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-        this.deletedAt = null;
-        this.region = region;
-        this.category = category;
-    }
-
-    @Builder
-    public Post(String contents, Region region, Category category, List<Photo> photos) {
-        this.contents = contents;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-        this.deletedAt = null;
-        this.region = region;
-        this.category = category;
-        this.photos = photos;
-    }
-
-    @Builder
-    public Post(Long id, String contents, LocalDateTime createdAt, LocalDateTime updatedAt, Region region, Category category) {
-        this.id = id;
-        this.contents = contents;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.deletedAt = null;
-        this.region = region;
-        setCategory(category);
-    }
 
     @Builder
     public Post(Long id, String contents, LocalDateTime createdAt, LocalDateTime updatedAt, Region region, Category category, List<Photo> photos) {
@@ -123,12 +89,8 @@ public class Post {
     }
 
     //연관관계 편의 메서드 - photo
-    public void addPhoto(Photo photo) {
-        photo.setPost(this);
-    }
-
-    public void setPhotos(List<Photo> photos) {
-        photos.forEach(this::addPhoto);
+    public void addPhoto(List<Photo> photos) {
+        this.photos = photos;
     }
 
     //연관관계 편의 메서드 - category

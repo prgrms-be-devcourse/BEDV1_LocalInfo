@@ -46,12 +46,6 @@ class PostControllerTest {
     private UserRepository userRepository;
 
     @Autowired
-    private CommentRepository commentRepository;
-
-    @Autowired
-    private PhotoRepository photoRepository;
-
-    @Autowired
     private ObjectMapper objectMapper;
 
     private PostDto postDto;

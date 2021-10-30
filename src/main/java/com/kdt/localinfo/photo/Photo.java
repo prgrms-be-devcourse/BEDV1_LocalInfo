@@ -1,13 +1,11 @@
 package com.kdt.localinfo.photo;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.kdt.localinfo.post.entity.Post;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Objects;
 
 @NoArgsConstructor
 @Getter
@@ -23,7 +21,6 @@ public class Photo {
     @Column(name = "url", nullable = false)
     private String url;
 
-    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "post_id", referencedColumnName = "post_id")
     private Post post;
@@ -33,11 +30,4 @@ public class Photo {
         this.url = url;
     }
 
-    public void setPost(Post post) {
-        if (Objects.nonNull(this.post)) {
-            this.post.getPhotos().remove(this);
-        }
-        this.post = post;
-        post.getPhotos().add(this);
-    }
 }
