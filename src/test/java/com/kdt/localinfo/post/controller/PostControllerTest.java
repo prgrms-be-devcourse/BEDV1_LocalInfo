@@ -3,9 +3,7 @@ package com.kdt.localinfo.post.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kdt.localinfo.category.Category;
 import com.kdt.localinfo.category.CategoryRepository;
-import com.kdt.localinfo.comment.repository.CommentRepository;
 import com.kdt.localinfo.photo.Photo;
-import com.kdt.localinfo.photo.PhotoRepository;
 import com.kdt.localinfo.post.dto.PostDto;
 import com.kdt.localinfo.post.service.PostService;
 import com.kdt.localinfo.user.entity.Region;
@@ -18,8 +16,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

@@ -12,6 +12,7 @@ import javax.transaction.Transactional;
 public class PostService {
 
     private final PostRepository postRepository;
+
     private final PostConverter postConverter;
 
     public PostService(PostRepository postRepository, PostConverter postConverter) {
