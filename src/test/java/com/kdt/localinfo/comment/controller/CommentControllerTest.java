@@ -33,9 +33,8 @@ class CommentControllerTest {
     void saveTest() throws Exception {
         CommentSaveRequest commentSaveRequest = new CommentSaveRequest(1L, "댓글 생성해주세요.");
         mockMvc.perform(RestDocumentationRequestBuilders.post("/posts/{post-id}/comments", 1L)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(commentSaveRequest))
-                )
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(commentSaveRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.data.contents", is("댓글 생성해주세요.")))
                 .andExpect(jsonPath("$.data.nickName", is("0kwon")))

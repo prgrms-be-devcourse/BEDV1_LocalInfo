@@ -1,6 +1,7 @@
 package com.kdt.localinfo.post.dto;
 
 import com.kdt.localinfo.category.Category;
+import com.kdt.localinfo.comment.entity.Comment;
 import com.kdt.localinfo.photo.Photo;
 import com.kdt.localinfo.user.entity.Region;
 import com.kdt.localinfo.user.entity.User;
