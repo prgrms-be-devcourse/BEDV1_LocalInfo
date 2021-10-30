@@ -8,7 +8,6 @@ import lombok.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
 @Builder
@@ -26,7 +25,7 @@ public class UserRequest {
     private String email;
     @NotEmpty
     private String password;
-//    @NotEmpty
+    @NotEmpty
     private String role;
     @NotEmpty
     private String neighborhood;
@@ -41,9 +40,10 @@ public class UserRequest {
                 .nickname(nickname)
                 .email(email)
                 .password(password)
-//                .roles(setRole(role))
+                .roles(Set.of(Role.valueOf(this.role)))
                 .region(setRegion(neighborhood, district, city))
                 .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
     }
 
@@ -53,13 +53,6 @@ public class UserRequest {
                 .district(district)
                 .city(city)
                 .build();
-    }
-
-    //TODO: 유저가 존재할 때 찾아서 업데이트
-    private Set<Role> setRole(String role) {
-        Set<Role> roles = new HashSet<>();
-        roles.add(Role.valueOf(role));
-        return roles;
     }
 
 }
