@@ -1,6 +1,6 @@
 package com.kdt.localinfo.post.controller;
 
-import com.kdt.localinfo.post.ApiResponse;
+import com.kdt.localinfo.common.ApiResponse;
 import com.kdt.localinfo.post.dto.PostDto;
 import com.kdt.localinfo.post.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class PostController {
 
-    @Autowired
-    private PostService postService;
+    private final PostService postService;
+
+    public PostController(PostService postService) {
+        this.postService = postService;
+    }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/posts")

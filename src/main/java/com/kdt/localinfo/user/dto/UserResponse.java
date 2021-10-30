@@ -24,6 +24,10 @@ public class UserResponse {
     private Region region;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime updatedAt;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime deletedAt;
 
     public UserResponse(User user) {
         this.id = user.getId();
@@ -34,5 +38,7 @@ public class UserResponse {
         this.roles = user.getRoles();
         this.region = user.getRegion();
         this.createdAt = user.getCreatedAt();
+        this.updatedAt = user.getUpdatedAt();
+        this.deletedAt = user.getDeletedAt();
     }
 }

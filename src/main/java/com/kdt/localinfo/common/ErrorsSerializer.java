@@ -1,4 +1,4 @@
-package com.kdt.localinfo.commons;
+package com.kdt.localinfo.common;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;

@@ -1,6 +1,6 @@
 package com.kdt.localinfo.post.converter;
 
-import com.kdt.localinfo.post.Entity.Post;
+import com.kdt.localinfo.post.entity.Post;
 import com.kdt.localinfo.post.dto.PostDto;
 import org.springframework.stereotype.Component;
 

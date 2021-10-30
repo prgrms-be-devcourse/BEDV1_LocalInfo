@@ -1,15 +1,13 @@
 package com.kdt.localinfo.user.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+@EqualsAndHashCode
 @Getter
 @Embeddable
 @AllArgsConstructor

@@ -1,8 +1,10 @@
-package com.kdt.localinfo.post.Entity;
+package com.kdt.localinfo.post.entity;
 
 import com.kdt.localinfo.category.Category;
+import com.kdt.localinfo.comment.entity.Comment;
 import com.kdt.localinfo.photo.Photo;
-import com.kdt.localinfo.region.Region;
+import com.kdt.localinfo.user.entity.Region;
+import com.kdt.localinfo.user.entity.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,16 +41,16 @@ public class Post {
     @Embedded
     private Region region;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-//    @OneToMany(mappedBy = "comments")
-//    private List<Comment> comments;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<Comment> comments = new ArrayList<>();
 
-//    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
-//    private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+    private User user;
 
     @OneToMany(mappedBy = "post")
     private List<Photo> photos = new ArrayList<>();
