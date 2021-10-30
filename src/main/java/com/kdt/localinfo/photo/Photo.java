@@ -1,6 +1,6 @@
 package com.kdt.localinfo.photo;
 
-import com.kdt.localinfo.post.Entity.Post;
+import com.kdt.localinfo.post.entity.Post;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +11,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @Getter
 @Entity
+@Table(name = "photos")
 public class Photo {
 
     @Id

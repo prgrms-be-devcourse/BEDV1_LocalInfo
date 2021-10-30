@@ -1,4 +1,4 @@
-package com.kdt.localinfo.commons;
+package com.kdt.localinfo.common;
 
 import com.kdt.localinfo.user.controller.IndexController;
 import org.springframework.hateoas.EntityModel;

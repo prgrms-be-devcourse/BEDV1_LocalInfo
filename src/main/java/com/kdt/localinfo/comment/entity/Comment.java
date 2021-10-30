@@ -26,9 +26,11 @@ public class Comment {
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;
 
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
+    @JoinColumn(name = "post_id", referencedColumnName = "post_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Post post;
 
