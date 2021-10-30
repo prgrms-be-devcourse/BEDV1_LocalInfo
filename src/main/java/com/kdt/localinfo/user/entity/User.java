@@ -1,21 +1,19 @@
 package com.kdt.localinfo.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.kdt.localinfo.comment.entity.Comment;
 import com.kdt.localinfo.post.entity.Post;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -46,7 +44,7 @@ public class User {
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    @Column(name = "updated_at", columnDefinition = "TIMESTAMP")
+    @Column(name = "updated_at", columnDefinition = "TIMESTAMP", nullable = false)
     private LocalDateTime updatedAt;
 
     @Column(name = "deleted_at", columnDefinition = "TIMESTAMP")
@@ -57,8 +55,9 @@ public class User {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    private Set<Role> roles = new HashSet<>();
+    private Set<Role> roles;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private final List<Post> posts = new ArrayList<>();
 
@@ -66,4 +65,3 @@ public class User {
     private final List<Comment> comments = new ArrayList<>();
 
 }
-

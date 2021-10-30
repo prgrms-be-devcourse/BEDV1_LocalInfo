@@ -4,7 +4,6 @@ import com.kdt.localinfo.common.ErrorResources;
 import com.kdt.localinfo.user.dto.UserRequest;
 import com.kdt.localinfo.user.dto.UserResponse;
 import com.kdt.localinfo.user.service.UserService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -20,7 +19,6 @@ import java.net.URI;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
-@Slf4j
 @RestController
 @RequestMapping(value = "/api/users", produces = MediaTypes.HAL_JSON_VALUE)
 public class UserController {
