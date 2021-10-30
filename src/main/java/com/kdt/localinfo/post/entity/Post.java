@@ -3,6 +3,7 @@ package com.kdt.localinfo.post.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.kdt.localinfo.category.Category;
 import com.kdt.localinfo.comment.entity.Comment;
+import com.kdt.localinfo.common.BaseEntity;
 import com.kdt.localinfo.photo.Photo;
 import com.kdt.localinfo.user.entity.Region;
 import com.kdt.localinfo.user.entity.User;
@@ -20,7 +21,7 @@ import java.util.Objects;
 @Table(name = "posts")
 @NoArgsConstructor
 @Entity
-public class Post {
+public class Post extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,15 +31,6 @@ public class Post {
     @Lob
     @Column(name = "contents", nullable = false)
     private String contents;
-
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
-
-    @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
 
     @Embedded
     private Region region;
@@ -62,9 +54,9 @@ public class Post {
     public Post(Long id, String contents, LocalDateTime createdAt, LocalDateTime updatedAt, Region region, Category category, List<Photo> photos) {
         this.id = id;
         this.contents = contents;
-        this.createdAt = createdAt;
+        /*this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-        this.deletedAt = null;
+        this.deletedAt = null;*/
         this.region = region;
         this.photos = photos;
         setCategory(category);
@@ -100,12 +92,12 @@ public class Post {
 
     public Long updatePost(String contents) {
         this.contents = contents;
-        this.updatedAt = LocalDateTime.now();
+        // this.updatedAt = LocalDateTime.now();
         return id;
     }
 
     public Long deletePost() {
-        this.deletedAt = LocalDateTime.now();
+        deletedAt = LocalDateTime.now();
         return id;
     }
 
