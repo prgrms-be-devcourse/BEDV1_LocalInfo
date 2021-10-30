@@ -3,7 +3,7 @@ package com.kdt.localinfo.comment.dto;
 public enum CommentDepth {
     ZERO(0L), ONE(1L);
 
-    Long depth;
+    private Long depth;
 
     CommentDepth(Long num) {
         this.depth = num;
