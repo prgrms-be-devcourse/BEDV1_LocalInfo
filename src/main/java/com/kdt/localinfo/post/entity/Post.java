@@ -51,12 +51,10 @@ public class Post extends BaseEntity {
     private List<Photo> photos = new ArrayList<>();
 
     @Builder
-    public Post(Long id, String contents, LocalDateTime createdAt, LocalDateTime updatedAt, Region region, Category category, List<Photo> photos) {
+    public Post(Long id, String contents, Region region, Category category, List<Photo> photos) {
         this.id = id;
         this.contents = contents;
-        /*this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.deletedAt = null;*/
+        this.deletedAt = null;
         this.region = region;
         this.photos = photos;
         setCategory(category);
@@ -92,7 +90,6 @@ public class Post extends BaseEntity {
 
     public Long updatePost(String contents) {
         this.contents = contents;
-        // this.updatedAt = LocalDateTime.now();
         return id;
     }
 

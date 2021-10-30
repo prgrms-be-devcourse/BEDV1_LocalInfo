@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class PostConverter {
 
     public Post convertToPost(PostDto postDto) {
-        Post post = new Post(postDto.getId(), postDto.getContents(), postDto.getCreatedAt(), postDto.getUpdatedAt(),
+        Post post = new Post(postDto.getId(), postDto.getContents(),
                 postDto.getRegion(), postDto.getCategory(), postDto.getPhotos());
         post.setCategory(postDto.getCategory());
         post.setUser(postDto.getUser());
