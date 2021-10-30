@@ -2,7 +2,6 @@ package com.kdt.localinfo.user.entity;
 
 import com.kdt.localinfo.comment.entity.Comment;
 import com.kdt.localinfo.post.entity.Post;
-import com.kdt.localinfo.user.dto.UserRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,6 +11,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,6 +21,7 @@ import java.util.Set;
 @Builder
 @Getter
 @Entity
+@Table(name = "users")
 public class User {
 
     @Id
@@ -59,11 +60,10 @@ public class User {
     private Set<Role> roles = new HashSet<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Post> posts;
+    private final List<Post> posts = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Comment> comments;
-
+    private final List<Comment> comments = new ArrayList<>();
 
 }
 

@@ -1,10 +1,9 @@
 package com.kdt.localinfo.user.controller;
 
-import com.kdt.localinfo.commons.ErrorResources;
+import com.kdt.localinfo.common.ErrorResources;
 import com.kdt.localinfo.user.dto.UserRequest;
 import com.kdt.localinfo.user.dto.UserResponse;
 import com.kdt.localinfo.user.service.UserService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.MediaTypes;
@@ -23,11 +22,14 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 @Slf4j
 @RestController
-@RequiredArgsConstructor
 @RequestMapping(value = "/api/users", produces = MediaTypes.HAL_JSON_VALUE)
 public class UserController {
 
     private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping(produces = MediaTypes.HAL_JSON_VALUE, consumes = MediaTypes.HAL_JSON_VALUE)
     public ResponseEntity create(@RequestBody @Validated UserRequest request, Errors errors) {

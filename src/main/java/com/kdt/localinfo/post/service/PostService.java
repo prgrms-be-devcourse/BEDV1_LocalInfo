@@ -1,6 +1,6 @@
 package com.kdt.localinfo.post.service;
 
-import com.kdt.localinfo.post.Entity.Post;
+import com.kdt.localinfo.post.entity.Post;
 import com.kdt.localinfo.post.converter.PostConverter;
 import com.kdt.localinfo.post.dto.PostDto;
 import com.kdt.localinfo.post.repository.PostRepository;
@@ -12,11 +12,14 @@ import javax.transaction.Transactional;
 @Service
 public class PostService {
 
-    @Autowired
-    private PostRepository postRepository;
+    private final PostRepository postRepository;
 
-    @Autowired
-    private PostConverter postConverter;
+    private final PostConverter postConverter;
+
+    public PostService(PostRepository postRepository, PostConverter postConverter) {
+        this.postRepository = postRepository;
+        this.postConverter = postConverter;
+    }
 
     @Transactional
     public Long createPost(PostDto postDto) {

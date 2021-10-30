@@ -2,8 +2,8 @@ package com.kdt.localinfo.post.repository;
 
 import com.kdt.localinfo.category.Category;
 import com.kdt.localinfo.photo.Photo;
-import com.kdt.localinfo.post.Entity.Post;
-import com.kdt.localinfo.region.Region;
+import com.kdt.localinfo.post.entity.Post;
+import com.kdt.localinfo.user.entity.Region;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

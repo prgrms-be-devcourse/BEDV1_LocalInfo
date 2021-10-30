@@ -47,7 +47,7 @@ class CommentServiceTest {
 
         assertThat(comment.getId(), is(1L));
         assertThat(comment.getContents(), is("안녕하세요 댓글입니다."));
-        assertThat(comment.getParentId(), is(0L));
+        assertThat(comment.getParentId(), is(nullValue()));
         assertThat(comment.getDeletedAt(), is(nullValue()));
         assertThat(comment.getUser(), is(user));
         assertThat(comment.getPost(), is(post));
