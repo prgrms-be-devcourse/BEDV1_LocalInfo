@@ -1,5 +1,6 @@
 package com.kdt.localinfo.post.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.kdt.localinfo.category.Category;
 import com.kdt.localinfo.comment.entity.Comment;
 import com.kdt.localinfo.photo.Photo;
@@ -13,6 +14,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Table(name = "posts")
@@ -48,33 +50,13 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
     private User user;
 
     @OneToMany(mappedBy = "post")
     private List<Photo> photos = new ArrayList<>();
-
-    @Builder
-    public Post(String contents, Region region, Category category) {
-        this.contents = contents;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-        this.deletedAt = null;
-        this.region = region;
-        this.category = category;
-    }
-
-    @Builder
-    public Post(String contents, Region region, Category category, List<Photo> photos) {
-        this.contents = contents;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-        this.deletedAt = null;
-        this.region = region;
-        this.category = category;
-        this.photos = photos;
-    }
 
     @Builder
     public Post(Long id, String contents, LocalDateTime createdAt, LocalDateTime updatedAt, Region region, Category category, List<Photo> photos) {
@@ -84,28 +66,31 @@ public class Post {
         this.updatedAt = updatedAt;
         this.deletedAt = null;
         this.region = region;
-        this.category = category;
         this.photos = photos;
+        setCategory(category);
     }
 
     //연관관계 편의 메서드 - user
-//    public void setUser(User user) {
-//        if (Objects.nonNull(this.user)) {
-//            this.user.getPosts().remove(this);
-//        }
-//
-//        this.user = user;
-//        user.getPosts().add(this);
-//    }
+    public void setUser(User user) {
+        if (Objects.nonNull(this.user)) {
+            this.user.getPosts().remove(this);
+        }
+        this.user = user;
+        user.getPosts().add(this);
+    }
 
     //연관관계 편의 메서드 - comment
-//    public void addComment(Comment comment) {
-//        comment.setPost(this);
-//    }
+    public void addComment(Comment comment) {
+        comment.setPost(this);
+    }
+
+    public void setComments(List<Comment> comments) {
+        comments.forEach(this::addComment);
+    }
 
     //연관관계 편의 메서드 - photo
-    public void addPhoto(Photo photo) {
-        photo.setPost(this);
+    public void addPhoto(List<Photo> photos) {
+        this.photos = photos;
     }
 
     //연관관계 편의 메서드 - category

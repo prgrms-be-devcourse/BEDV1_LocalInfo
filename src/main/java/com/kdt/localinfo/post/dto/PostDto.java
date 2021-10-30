@@ -32,12 +32,11 @@ public class PostDto {
 
     private User user;
 
-    private Comment comment;
-
     private List<Photo> photos;
 
     @Builder
-    public PostDto(Long id, String contents, Region region, LocalDateTime createdAt, LocalDateTime updatedAt, Category category, LocalDateTime deletedAt, List<Photo> photos) {
+    public PostDto(Long id, String contents, Region region, LocalDateTime createdAt, LocalDateTime updatedAt,
+                   Category category, LocalDateTime deletedAt, List<Photo> photos, User user) {
         this.id = id;
         this.contents = contents;
         this.region = region;
@@ -46,5 +45,6 @@ public class PostDto {
         this.category = category;
         this.deletedAt = deletedAt;
         this.photos = photos;
+        this.user = user;
     }
 }

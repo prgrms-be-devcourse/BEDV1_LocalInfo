@@ -40,3 +40,7 @@ out/
 .DS_Store
 .AppleDouble
 .LSOverride
+
+### local-db
+db/
+docker-compose.yml

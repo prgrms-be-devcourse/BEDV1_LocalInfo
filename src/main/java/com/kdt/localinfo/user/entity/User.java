@@ -1,5 +1,6 @@
 package com.kdt.localinfo.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.kdt.localinfo.comment.entity.Comment;
 import com.kdt.localinfo.post.entity.Post;
 import lombok.*;
@@ -56,6 +57,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private final List<Post> posts = new ArrayList<>();
 
