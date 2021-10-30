@@ -4,16 +4,16 @@ import lombok.Getter;
 import org.springframework.validation.Errors;
 
 @Getter
-public class CommentCreateFailException extends RuntimeException {
+public class ValidationException extends RuntimeException {
 
     private Errors errors;
 
-    public CommentCreateFailException(String message, Errors errors) {
+    public ValidationException(String message, Errors errors) {
         super(message);
         this.errors = errors;
     }
 
-    public CommentCreateFailException(String message) {
+    public ValidationException(String message) {
         super(message);
     }
 }

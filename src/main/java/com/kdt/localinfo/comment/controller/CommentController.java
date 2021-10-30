@@ -4,7 +4,7 @@ import com.kdt.localinfo.comment.dto.CommentResponse;
 import com.kdt.localinfo.comment.dto.CommentSaveRequest;
 import com.kdt.localinfo.comment.service.CommentService;
 import com.kdt.localinfo.common.ApiResponse;
-import com.kdt.localinfo.common.CommentCreateFailException;
+import com.kdt.localinfo.common.ValidationException;
 import com.kdt.localinfo.common.ErrorResources;
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -38,8 +38,8 @@ public class CommentController {
         return ApiResponse.fail(HttpStatus.NOT_FOUND, e.getMessage());
     }
 
-    @ExceptionHandler({CommentCreateFailException.class})
-    public ResponseEntity<EntityModel<Errors>> badRequest(CommentCreateFailException ex) {
+    @ExceptionHandler({ValidationException.class})
+    public ResponseEntity<EntityModel<Errors>> badRequest(ValidationException ex) {
         return ResponseEntity.badRequest().body(ErrorResources.modelOf(ex.getErrors()));
     }
 
@@ -47,7 +47,7 @@ public class CommentController {
     public ResponseEntity<EntityModel<CommentResponse>> save(@PathVariable("post-id") Long postId, @RequestBody @Validated CommentSaveRequest commentSaveRequest, Errors errors) throws NotFoundException, NoSuchMethodException {
         log.info("save execute");
         if (errors.hasErrors()) {
-            throw new CommentCreateFailException("CommentSaveRequest Validation Error", errors);
+            throw new ValidationException("CommentSaveRequest Validation Error", errors);
         }
 
         CommentResponse commentResponse = commentService.save(commentSaveRequest, postId);
