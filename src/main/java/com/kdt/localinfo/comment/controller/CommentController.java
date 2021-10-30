@@ -32,10 +32,9 @@ public class CommentController {
         this.commentService = commentService;
     }
 
-    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NotFoundException.class)
-    public ApiResponse<String> notFoundHandler(NotFoundException e) {
-        return ApiResponse.fail(HttpStatus.NOT_FOUND, e.getMessage());
+    public ResponseEntity<Object> notFoundHandler(NotFoundException e) {
+        return ResponseEntity.notFound().build();
     }
 
     @ExceptionHandler({ValidationException.class})
