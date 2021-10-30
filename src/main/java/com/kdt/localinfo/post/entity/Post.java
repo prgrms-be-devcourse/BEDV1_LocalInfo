@@ -66,8 +66,8 @@ public class Post {
         this.updatedAt = updatedAt;
         this.deletedAt = null;
         this.region = region;
+        this.photos = photos;
         setCategory(category);
-        setPhotos(photos);
     }
 
     //연관관계 편의 메서드 - user
