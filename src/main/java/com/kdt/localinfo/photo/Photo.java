@@ -1,5 +1,6 @@
 package com.kdt.localinfo.photo;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.kdt.localinfo.post.entity.Post;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,6 +23,7 @@ public class Photo {
     @Column(name = "url", nullable = false)
     private String url;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "post_id", referencedColumnName = "post_id")
     private Post post;

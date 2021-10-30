@@ -1,7 +1,7 @@
 package com.kdt.localinfo.post.converter;
 
-import com.kdt.localinfo.post.entity.Post;
 import com.kdt.localinfo.post.dto.PostDto;
+import com.kdt.localinfo.post.entity.Post;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -11,7 +11,7 @@ public class PostConverter {
         Post post = new Post(postDto.getId(), postDto.getContents(), postDto.getCreatedAt(), postDto.getUpdatedAt(),
                 postDto.getRegion(), postDto.getCategory(), postDto.getPhotos());
         post.setCategory(postDto.getCategory());
-//        post.setUser(postDto.getUser());
+        post.setUser(postDto.getUser());
 
         return post;
     }

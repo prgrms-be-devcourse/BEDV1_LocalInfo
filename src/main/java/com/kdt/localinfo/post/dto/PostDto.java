@@ -1,7 +1,6 @@
 package com.kdt.localinfo.post.dto;
 
 import com.kdt.localinfo.category.Category;
-import com.kdt.localinfo.comment.entity.Comment;
 import com.kdt.localinfo.photo.Photo;
 import com.kdt.localinfo.user.entity.Region;
 import com.kdt.localinfo.user.entity.User;
@@ -32,12 +31,11 @@ public class PostDto {
 
     private User user;
 
-    private Comment comment;
-
     private List<Photo> photos;
 
     @Builder
-    public PostDto(Long id, String contents, Region region, LocalDateTime createdAt, LocalDateTime updatedAt, Category category, LocalDateTime deletedAt, List<Photo> photos) {
+    public PostDto(Long id, String contents, Region region, LocalDateTime createdAt, LocalDateTime updatedAt,
+                   Category category, LocalDateTime deletedAt, List<Photo> photos, User user) {
         this.id = id;
         this.contents = contents;
         this.region = region;
@@ -46,5 +44,6 @@ public class PostDto {
         this.category = category;
         this.deletedAt = deletedAt;
         this.photos = photos;
+        this.user = user;
     }
 }
