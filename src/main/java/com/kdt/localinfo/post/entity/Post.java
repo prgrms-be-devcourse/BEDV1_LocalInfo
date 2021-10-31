@@ -54,7 +54,6 @@ public class Post extends BaseEntity {
     public Post(Long id, String contents, Region region, Category category, List<Photo> photos) {
         this.id = id;
         this.contents = contents;
-        this.deletedAt = null;
         this.region = region;
         this.photos = photos;
         setCategory(category);

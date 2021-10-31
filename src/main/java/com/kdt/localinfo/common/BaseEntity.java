@@ -1,15 +1,11 @@
 package com.kdt.localinfo.common;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.Column;
-import javax.persistence.EntityListeners;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @EntityListeners(value = AuditingEntityListener.class)
@@ -23,7 +19,7 @@ public class BaseEntity {
     private LocalDateTime updatedAt;
 
     @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
+    protected LocalDateTime deletedAt;
 
     @PrePersist
     void onPrePersist() {
