@@ -65,9 +65,6 @@ class PostControllerTest {
                 .neighborhood("neighborhood1")
                 .build();
         User user = User.builder()
-                .createdAt(LocalDateTime.now())
-                .deletedAt(null)
-                .updatedAt(LocalDateTime.now())
                 .email("email1")
                 .region(region)
                 .nickname("nickname")
@@ -78,9 +75,6 @@ class PostControllerTest {
 
         postDto = PostDto.builder()
                 .contents("this is sample post")
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .deletedAt(null)
                 .region(region)
                 .category(category)
                 .photos(photos)

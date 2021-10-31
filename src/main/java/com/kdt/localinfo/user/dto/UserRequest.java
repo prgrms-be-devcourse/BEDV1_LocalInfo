@@ -7,7 +7,6 @@ import lombok.*;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
-import java.time.LocalDateTime;
 import java.util.Set;
 
 @Builder
@@ -42,8 +41,6 @@ public class UserRequest {
                 .password(password)
                 .roles(Set.of(Role.valueOf(this.role)))
                 .region(setRegion(neighborhood, district, city))
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
                 .build();
     }
 

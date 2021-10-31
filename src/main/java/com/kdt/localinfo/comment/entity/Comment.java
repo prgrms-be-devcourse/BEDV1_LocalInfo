@@ -1,5 +1,6 @@
 package com.kdt.localinfo.comment.entity;
 
+import com.kdt.localinfo.common.BaseEntity;
 import com.kdt.localinfo.post.entity.Post;
 import com.kdt.localinfo.user.entity.User;
 import lombok.AllArgsConstructor;
@@ -8,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Builder
@@ -17,14 +17,11 @@ import java.util.Objects;
 @Getter
 @Entity
 @Table(name = "comments")
-public class Comment {
+public class Comment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String contents;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private LocalDateTime deletedAt;
 
     @JoinColumn(name = "user_id")
     @ManyToOne(fetch = FetchType.LAZY)
