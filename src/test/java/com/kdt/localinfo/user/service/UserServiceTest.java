@@ -45,7 +45,6 @@ class UserServiceTest {
                 .build();
         UserResponse userResponse = userService.addUser(userRequest);
         assertAll(
-                () -> assertEquals(userResponse.getId(), 1L),
                 () -> assertEquals(userResponse.getName(), "name"),
                 () -> assertEquals(userResponse.getNickname(), "testNickname"),
                 () -> assertEquals(userResponse.getEmail(), "test@mail.com"),
