@@ -59,8 +59,9 @@ asciidoctor {
     dependsOn test
 }
 
+processResources.dependsOn('copyConfigSettings')
+
 task copyConfigSettings(type: Copy) {
-    description = 'Copy application-slack.yml from submodule'
     from 'src/main/config'
     into 'src/main/resources/'
 }
