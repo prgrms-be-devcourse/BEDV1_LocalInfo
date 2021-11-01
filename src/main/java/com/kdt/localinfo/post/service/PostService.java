@@ -59,4 +59,17 @@ public class PostService {
         return id;
     }
 
+    @Transactional
+    public Long deletePost(Long id) {
+        postRepository.findById(id)
+                .filter(unidentifiedPost -> unidentifiedPost.getDeletedAt() == null)
+                .map(foundPost -> {
+                    foundPost.deletePost();
+                    postRepository.save(foundPost);
+                    return id;
+                })
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글을 지울 수 없습니다."));
+        return 0L;
+    }
+
 }
