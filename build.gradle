@@ -3,6 +3,15 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'org.asciidoctor.convert' version '1.5.8'
     id 'java'
+    id "org.sonarqube" version "3.3"
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "prgrms-be-devcourse_BEDV1_LocalInfo"
+        property "sonar.organization", "prgrms-be-devcourse"
+        property "sonar.host.url", "https://sonarcloud.io"
+    }
 }
 
 group = 'com.kdt'
