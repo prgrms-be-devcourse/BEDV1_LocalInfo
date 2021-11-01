@@ -18,10 +18,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -48,6 +48,10 @@ class PostControllerTest {
 
     private PostDto postDto;
 
+    private Long savedPostId;
+
+    private Long savedCategoryId;
+
     @BeforeEach
     void saveSampleData() {
         List<Photo> photos = new ArrayList<>();
@@ -57,7 +61,8 @@ class PostControllerTest {
         photos.add(photo2);
 
         Category category = new Category(1L, "동네생활");
-        categoryRepository.save(category);
+        Category savedCategory = categoryRepository.save(category);
+        savedCategoryId = savedCategory.getId();
 
         Region region = Region.builder()
                 .city("city1")
@@ -76,12 +81,12 @@ class PostControllerTest {
         postDto = PostDto.builder()
                 .contents("this is sample post")
                 .region(region)
-                .category(category)
+                .category(savedCategory)
                 .photos(photos)
                 .user(user)
                 .build();
 
-        Long savedPostId = postService.createPost(postDto);
+        savedPostId = postService.createPost(postDto);
     }
 
     @Test
@@ -92,4 +97,21 @@ class PostControllerTest {
                 .andExpect(status().isCreated())
                 .andDo(print());
     }
+
+    @Test
+    void findDetailPost() throws Exception {
+        mockMvc.perform(get("/posts/{post-id}", savedPostId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    void findPostByCategory() throws Exception {
+        mockMvc.perform(get("/categories/{category-id}", savedCategoryId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
 }

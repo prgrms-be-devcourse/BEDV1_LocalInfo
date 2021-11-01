@@ -4,9 +4,12 @@ import com.kdt.localinfo.post.converter.PostConverter;
 import com.kdt.localinfo.post.dto.PostDto;
 import com.kdt.localinfo.post.entity.Post;
 import com.kdt.localinfo.post.repository.PostRepository;
+import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService {
@@ -25,5 +28,21 @@ public class PostService {
         Post post = postConverter.convertToPost(postDto);
         Post savedPost = postRepository.save(post);
         return savedPost.getId();
+    }
+
+    @Transactional
+    public PostDto findDetailPost(Long id) throws NotFoundException {
+        return postRepository.findById(id)
+                .filter(foundPost -> foundPost.getDeletedAt() == null)
+                .map(postConverter::convertToPostDto)
+                .orElseThrow(() -> new NotFoundException("해당 게시글을 찾을 수 없습니다."));
+    }
+
+    @Transactional
+    public List<PostDto> findAllByCategory(Long categoryId) {
+        return postRepository.findPostByCategoryId(categoryId)
+                .stream().filter(foundPost -> foundPost.getDeletedAt() == null)
+                .map(postConverter::convertToPostDto)
+                .collect(Collectors.toList());
     }
 }
