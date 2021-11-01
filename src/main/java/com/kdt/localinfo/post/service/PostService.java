@@ -45,4 +45,18 @@ public class PostService {
                 .map(postConverter::convertToPostDto)
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public Long updatePost(Long id, PostDto postDto) throws NotFoundException {
+        postRepository.findById(id)
+                .filter(unidentifiedPost -> unidentifiedPost.getDeletedAt() == null)
+                .map(foundPost -> {
+                    foundPost.updatePost(postDto.getContents(), postDto.getCategory(), postDto.getPhotos());
+                    postRepository.save(foundPost);
+                    return id;
+                })
+                .orElseThrow(() -> new NotFoundException("해당 게시글을 찾을 수 없습니다."));
+        return id;
+    }
+
 }

@@ -25,16 +25,21 @@ public class PostController {
         return ApiResponse.successCreated(savedPostId);
     }
 
-    @GetMapping("/posts/{id}")
-    public ApiResponse<PostDto> findDetailPost(@PathVariable Long id) throws NotFoundException {
-        PostDto foundPost = postService.findDetailPost(id);
+    @GetMapping("/posts/{postId}")
+    public ApiResponse<PostDto> findDetailPost(@PathVariable Long postId) throws NotFoundException {
+        PostDto foundPost = postService.findDetailPost(postId);
         return ApiResponse.ok(foundPost);
     }
 
     @GetMapping("/categories/{categoryId}")
-    public ApiResponse<List<PostDto>> findPostsByCategory(@PathVariable Long categoryId) throws NotFoundException {
+    public ApiResponse<List<PostDto>> findPostsByCategory(@PathVariable Long categoryId) {
         List<PostDto> posts = postService.findAllByCategory(categoryId);
         return ApiResponse.ok(posts);
+    }
+
+    @PutMapping("/posts/{postId}")
+    public ApiResponse<Long> updatePost(@PathVariable Long postId, @RequestBody PostDto postDto) throws NotFoundException {
+        return ApiResponse.ok(postService.updatePost(postId, postDto));
     }
 
 }

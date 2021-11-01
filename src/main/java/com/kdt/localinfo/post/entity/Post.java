@@ -87,8 +87,11 @@ public class Post extends BaseEntity {
         this.category = category;
     }
 
-    public Long updatePost(String contents) {
+    public Long updatePost(String contents, Category category, List<Photo> photos) {
         this.contents = contents;
+        this.category = category;
+        setCategory(category);
+        this.photos = photos;
         return id;
     }
 
