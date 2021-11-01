@@ -63,7 +63,7 @@ processResources.dependsOn('copyConfigSettings')
 
 task copyConfigSettings(type: Copy) {
     from 'src/main/config'
-    into 'src/main/resources/'
+    into 'src/main/java/resources/'
 }
 
 build {
