@@ -8,7 +8,6 @@ import com.kdt.localinfo.user.entity.Region;
 import com.kdt.localinfo.user.entity.User;
 import com.kdt.localinfo.user.repository.UserRepository;
 import javassist.NotFoundException;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,15 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.transaction.Transactional;
-
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
-@Transactional
+//@Transactional
 @SpringBootTest
 class PostServiceTest {
 
@@ -129,4 +125,14 @@ class PostServiceTest {
         assertThat(updatedPostDto.getCategory().getName()).isNotEqualTo(postDto.getCategory().getName());
         assertThat(updatedPostDto.getPhotos().get(0).getUrl()).isNotEqualTo(postDto.getPhotos().get(0).getUrl());
     }
+
+    @Test
+    @DisplayName("게시물 삭제 확인용 테스트")
+    void deletePost() {
+        postService.deletePost(savedPostId);
+
+        assertThat(postService.findAllByCategory(savedCategory1.getId()).size()).isEqualTo(0);
+    }
+
+
 }
