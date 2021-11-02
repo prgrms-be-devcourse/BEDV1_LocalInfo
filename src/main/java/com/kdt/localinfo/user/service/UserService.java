@@ -27,7 +27,7 @@ public class UserService {
         return new UserResponse(savedUser);
     }
 
-    public List<UserResponse> getUserList() throws Exception {
+    public List<UserResponse> getUserList() {
         return userRepository.findAll()
                 .stream()
                 .map(UserResponse::new)
@@ -35,7 +35,8 @@ public class UserService {
     }
 
     public UserResponse getUser(Long id) throws NotFoundException {
-        return userRepository.findById(id).map(UserResponse::new)
+        return userRepository.findById(id)
+                .map(UserResponse::new)
                 .orElseThrow(() -> new NotFoundException("해당 유저가 존재하지 않습니다."));
     }
 }
