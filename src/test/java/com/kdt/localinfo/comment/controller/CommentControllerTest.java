@@ -111,25 +111,25 @@ class CommentControllerTest {
         Post savePost = postRepository.save(post1);
 
         Comment comment = Comment.builder()
-                .post(savePost)
                 .contents("댓글")
-                .user(saveUser)
                 .build();
+        comment.setPost(savePost);
+        comment.setUser(saveUser);
+
         Comment comment2 = Comment.builder()
-                .post(savePost)
                 .contents("댓글")
-                .user(saveUser)
                 .build();
-        Comment savedComment = commentRepository.save(comment);
+        comment2.setPost(savePost);
+        comment2.setUser(saveUser);
+
+        commentRepository.save(comment);
         commentRepository.save(comment2);
 
-        mockMvc.perform(get("/posts/{post-id}/comments", savedComment.getPost().getId())
+        mockMvc.perform(get("/posts/{post-id}/comments", savePost.getId())
                         .accept(MediaTypes.HAL_JSON_VALUE)
                         .contentType(MediaTypes.HAL_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("_links.self").exists())
                 .andDo(print());
-
-
     }
 }
