@@ -15,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -53,5 +54,16 @@ public class CommentController {
                 linkTo(methodOn(CommentController.class).save(postId, commentSaveRequest, errors)).withSelfRel());
 
         return ResponseEntity.created(createdUri).body(entityModel);
+    }
+
+    @GetMapping(path = "/posts/{post-id}/comments", produces = MediaTypes.HAL_JSON_VALUE, consumes = MediaTypes.HAL_JSON_VALUE)
+    public ResponseEntity<EntityModel<List<CommentResponse>>> findAllByPostId(@PathVariable("post-id") Long postId) throws NotFoundException {
+        log.info("findAllByPostId execute");
+        List<CommentResponse> commentResponses = commentService.findAllByPostId(postId);
+
+        EntityModel<List<CommentResponse>> entityModel = EntityModel.of(commentResponses,
+                linkTo(methodOn(CommentController.class).findAllByPostId(postId)).withSelfRel());
+
+        return ResponseEntity.ok(entityModel);
     }
 }

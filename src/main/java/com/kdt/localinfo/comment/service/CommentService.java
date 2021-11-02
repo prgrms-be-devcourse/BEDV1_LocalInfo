@@ -14,6 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Slf4j
 @Service
 public class CommentService {
@@ -44,5 +47,22 @@ public class CommentService {
         Comment commentEntity = commentRepository.save(comment);
 
         return commentConverter.converterToCommentResponse(commentEntity);
+    }
+
+    @Transactional
+    public List<CommentResponse> findAllByPostId(Long postId) throws NotFoundException {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new NotFoundException("게시물에 대한 정보를 찾을 수 없습니다."));
+
+        List<Comment> comments = commentRepository.findAllByPost(post);
+
+        List<CommentResponse> commentResponses = new ArrayList<>();
+
+        comments.forEach(comment -> {
+            CommentResponse commentResponse = commentConverter.converterToCommentResponse(comment);
+            commentResponses.add(commentResponse);
+        });
+
+        return commentResponses;
     }
 }
