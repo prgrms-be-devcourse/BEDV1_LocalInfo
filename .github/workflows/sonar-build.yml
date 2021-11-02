@@ -2,9 +2,7 @@ name: Sonar-Build
 on:
   push:
     branches:
-      - [ develop ]
-  pull_request:
-    types: [opened, synchronize, reopened]
+      - develop
 jobs:
   build:
     name: Build
