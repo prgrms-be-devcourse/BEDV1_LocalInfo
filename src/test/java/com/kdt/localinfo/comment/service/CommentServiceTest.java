@@ -84,6 +84,7 @@ class CommentServiceTest {
     }
 
     @Test
+    @DisplayName("게시글 아이디로 댓글 조회 Service")
     void findAllByPostIdTest() throws NotFoundException {
 
         // GIVEN
