@@ -18,7 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,7 +56,7 @@ class PostControllerTest {
         photos.add(photo2);
 
         Category category = new Category(1L, "동네생활");
-        categoryRepository.save(category);
+        Category saveCategory = categoryRepository.save(category);
 
         Region region = Region.builder()
                 .city("city1")
@@ -71,17 +70,17 @@ class PostControllerTest {
                 .password("password")
                 .name("name")
                 .build();
-        userRepository.save(user);
+        User saveUser = userRepository.save(user);
 
         postDto = PostDto.builder()
                 .contents("this is sample post")
                 .region(region)
-                .category(category)
+                .category(saveCategory)
                 .photos(photos)
-                .user(user)
+                .user(saveUser)
                 .build();
 
-        Long savedPostId = postService.createPost(postDto);
+        postService.createPost(postDto);
     }
 
     @Test

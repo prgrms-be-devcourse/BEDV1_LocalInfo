@@ -1,0 +1,3 @@
+[submodule "src/main/config"]
+	path = src/main/config
+	url = https://github.com/prgrms-be-devcourse/localinfo-submodule.git

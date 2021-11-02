@@ -5,6 +5,8 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+*.properties
+
 ### STS ###
 .apt_generated
 .classpath
@@ -44,3 +46,4 @@ out/
 ### local-db
 db/
 docker-compose.yml
+src/main/resources/ 제거할 예정
