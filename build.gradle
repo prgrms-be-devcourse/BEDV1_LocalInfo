@@ -4,6 +4,7 @@ plugins {
     id 'org.asciidoctor.convert' version '1.5.8'
     id 'java'
     id "org.sonarqube" version "3.3"
+    id 'jacoco'
 }
 
 sonarqube {
@@ -53,6 +54,32 @@ dependencies {
 test {
     outputs.dir snippetsDir
     useJUnitPlatform()
+    finalizedBy 'jacocoTestReport'
+}
+
+jacocoTestReport {
+    reports {
+        html.enabled true
+        html.destination file("$buildDir/jacocoHtml")
+    }
+    finalizedBy 'jacocoTestCoverageVerification'
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            enabled = true
+            element = 'BUNDLE'
+
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.70
+            }
+
+            excludes = []
+        }
+    }
 }
 
 asciidoctor {
