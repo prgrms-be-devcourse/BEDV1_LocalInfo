@@ -31,7 +31,7 @@ public class PostController {
         return ApiResponse.ok(foundPost);
     }
 
-    @GetMapping("/categories/{categoryId}")
+    @GetMapping("posts/categories/{categoryId}")
     public ApiResponse<List<PostDto>> findPostsByCategory(@PathVariable Long categoryId) {
         List<PostDto> posts = postService.findAllByCategory(categoryId);
         return ApiResponse.ok(posts);

@@ -118,7 +118,7 @@ class PostControllerTest {
     @Test
     @DisplayName("카테고리별 게시물 조회 테스트")
     void findPostByCategory() throws Exception {
-        mockMvc.perform(get("/categories/{category-id}", savedCategory1.getId())
+        mockMvc.perform(get("posts/categories/{category-id}", savedCategory1.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print());
@@ -141,7 +141,7 @@ class PostControllerTest {
                 .category(savedCategory2)
                 .photos(photos)
                 .build();
-        mockMvc.perform(put("/posts/{id}", newPostDto.getId())
+        mockMvc.perform(put("/posts/{post-id}", newPostDto.getId())
                 .content(objectMapper.writeValueAsString(newPostDto))
                 .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
     }
