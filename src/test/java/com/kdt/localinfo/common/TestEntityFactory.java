@@ -10,35 +10,6 @@ import com.kdt.localinfo.user.entity.User;
 import java.util.Set;
 
 public class TestEntityFactory {
-    public static User.UserBuilder userBuilder() {
-        return User.builder()
-                .id(1L)
-                .roles(Set.of(Role.GENERAL))
-                .region(new Region("고양시", "덕양구", "행신동"))
-                .name("test")
-                .password("1234")
-                .nickname("nickName")
-                .email("test@gmail.com");
-    }
-
-    public static Post.PostBuilder postBuilder() {
-        User user = User.builder()
-                .id(1L)
-                .roles(Set.of(Role.GENERAL))
-                .region(new Region("고양시", "덕양구", "행신동"))
-                .name("test")
-                .password("1234")
-                .nickname("nickName")
-                .email("test@gmail.com")
-                .build();
-
-        return Post.builder()
-                .id(1L)
-                .contents("게시글")
-                .category(new Category(1L, "동네 맛집"))
-                .region(user.getRegion());
-    }
-
     public static Comment.CommentBuilder commentBuilder() {
         User user = User.builder()
                 .id(1L)

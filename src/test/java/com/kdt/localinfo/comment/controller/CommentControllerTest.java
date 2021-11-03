@@ -101,8 +101,10 @@ class CommentControllerTest {
                 .name("name")
                 .build();
         User saveUser = userRepository.save(user);
+
         Category category = new Category(1L, "동네생활");
         Category saveCategory = categoryRepository.save(category);
+
         Post post1 = Post.builder()
                 .contents("this is sample post")
                 .region(region)
