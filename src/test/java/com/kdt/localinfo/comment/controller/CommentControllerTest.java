@@ -119,10 +119,12 @@ class CommentControllerTest {
         comment.setUser(saveUser);
 
         Comment comment2 = Comment.builder()
-                .contents("댓글")
+                .contents("댓글2")
                 .build();
         comment2.setPost(savePost);
         comment2.setUser(saveUser);
+
+        comment.setDeleted();
 
         commentRepository.save(comment);
         commentRepository.save(comment2);
@@ -131,6 +133,7 @@ class CommentControllerTest {
                         .accept(MediaTypes.HAL_JSON_VALUE)
                         .contentType(MediaTypes.HAL_JSON_VALUE))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$._embedded.commentResponseList..contents").value("댓글2"))
                 .andExpect(jsonPath("_links.self").exists())
                 .andDo(print());
     }
