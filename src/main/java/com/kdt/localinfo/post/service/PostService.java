@@ -3,6 +3,7 @@ package com.kdt.localinfo.post.service;
 import com.kdt.localinfo.photo.Photo;
 import com.kdt.localinfo.post.dto.PostCreateRequest;
 import com.kdt.localinfo.post.dto.PostResponse;
+import com.kdt.localinfo.post.dto.PostUpdateRequest;
 import com.kdt.localinfo.post.entity.Post;
 import com.kdt.localinfo.post.repository.PostRepository;
 import javassist.NotFoundException;
@@ -60,5 +61,41 @@ public class PostService {
                 .stream().filter(foundPost -> foundPost.getDeletedAt() == null)
                 .map(PostResponse::of)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public Long updatePost(Long postId, PostUpdateRequest request) throws NotFoundException, IOException {
+        List<Photo> photoUrls = new ArrayList<>();
+        List<MultipartFile> photos = request.getPhotos();
+
+        if (!Objects.isNull(photos)) {
+            for (MultipartFile photo : photos) {
+                Photo photoEntity = Photo.builder()
+                        .url(s3Service.upload(photo))
+                        .build();
+                photoUrls.add(photoEntity);
+            }
+        }
+
+        return postRepository.findById(postId)
+                .filter(unidentifiedPost -> unidentifiedPost.getDeletedAt() == null)
+                .map(foundPost -> {
+                    Post updated = request.toUpdateEntity(foundPost, photoUrls);
+                    postRepository.save(updated);
+                    return postId;
+                })
+                .orElseThrow(() -> new NotFoundException("해당 게시글을 찾을 수 없습니다."));
+    }
+
+    @Transactional
+    public Long deletePost(Long postId) {
+        return postRepository.findById(postId)
+                .filter(unidentifiedPost -> unidentifiedPost.getDeletedAt() == null)
+                .map(foundPost -> {
+                    foundPost.deletePost();
+                    postRepository.save(foundPost);
+                    return postId;
+                })
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글을 지울 수 없습니다."));
     }
 }

@@ -2,6 +2,7 @@ package com.kdt.localinfo.post.controller;
 
 import com.kdt.localinfo.post.dto.PostCreateRequest;
 import com.kdt.localinfo.post.dto.PostResponse;
+import com.kdt.localinfo.post.dto.PostUpdateRequest;
 import com.kdt.localinfo.post.service.PostService;
 import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
@@ -37,5 +38,17 @@ public class PostController {
     public ResponseEntity<List<PostResponse>> findPostsByCategory(@PathVariable Long categoryId) {
         List<PostResponse> posts = postService.findAllByCategory(categoryId);
         return ResponseEntity.ok(posts);
+    }
+
+    @PutMapping(value = "/posts/{postId}", consumes = {"multipart/form-data"})
+    public ResponseEntity<Long> updatePost(
+            @PathVariable Long postId, @ModelAttribute PostUpdateRequest request
+    ) throws NotFoundException, IOException {
+        return ResponseEntity.ok(postService.updatePost(postId, request));
+    }
+
+    @DeleteMapping("/posts/{postId}")
+    public ResponseEntity<Long> deletePost(@PathVariable Long postId) {
+        return ResponseEntity.ok(postService.deletePost(postId));
     }
 }
