@@ -14,8 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -56,13 +56,9 @@ public class CommentService {
 
         List<Comment> comments = commentRepository.findAllByPost(post);
 
-        List<CommentResponse> commentResponses = new ArrayList<>();
-
-        comments.forEach(comment -> {
-            CommentResponse commentResponse = commentConverter.converterToCommentResponse(comment);
-            commentResponses.add(commentResponse);
-        });
-
-        return commentResponses;
+        return comments.stream()
+                .filter(comment -> comment.getDeletedAt() == null)
+                .map(commentConverter::converterToCommentResponse)
+                .collect(Collectors.toList());
     }
 }
