@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -113,6 +114,31 @@ class PostControllerTest {
     @DisplayName("카테고리별 게시물 조회 테스트")
     void findPostByCategory() throws Exception {
         mockMvc.perform(get("/posts/categories/{category-id}", savedCategory1.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("게시물 수정 테스트")
+    void updatePost() throws Exception {
+
+//        File f = new File("/Users/sample.png");
+//        FileInputStream fi1 = new FileInputStream(f);
+//        MockMultipartFile fstmp = new MockMultipartFile("upload", f.getName(), "multipart/form-data", fi1);
+//        mockMvc.perform(MockMvcRequestBuilders.fileUpload("/posts")
+//                        .file(fstmp)
+//                        .param("id", "1L")
+//                        .param("contents", "this is updated contents")
+//                        .param("category", "category1"))
+//                .andExpect(status().isOk());
+
+    }
+
+    @Test
+    @DisplayName("게시물 삭제 테스트")
+    void deletePost() throws Exception {
+        mockMvc.perform(delete("/posts/{post-id}", savedPostId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print());

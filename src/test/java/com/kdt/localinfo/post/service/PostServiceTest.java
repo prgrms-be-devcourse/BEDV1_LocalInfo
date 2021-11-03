@@ -4,6 +4,7 @@ import com.kdt.localinfo.category.Category;
 import com.kdt.localinfo.category.CategoryRepository;
 import com.kdt.localinfo.post.dto.PostCreateRequest;
 import com.kdt.localinfo.post.dto.PostResponse;
+import com.kdt.localinfo.post.dto.PostUpdateRequest;
 import com.kdt.localinfo.user.entity.Region;
 import com.kdt.localinfo.user.entity.User;
 import com.kdt.localinfo.user.repository.UserRepository;
@@ -89,6 +90,30 @@ class PostServiceTest {
 
         assertThat(findPostsByCategory1.size()).isEqualTo(1);
         assertThat(findPostsByCategory2.size()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("게시물 수정 내용 확인용 테스트")
+    void updatePost() throws NotFoundException, IOException {
+        PostUpdateRequest postUpdateRequest = PostUpdateRequest.builder()
+                .id(savedPostId)
+                .contents("this is updated post")
+                .category(savedCategory2)
+                .build();
+
+        Long updatedPostId = postService.updatePost(postUpdateRequest.getId(), postUpdateRequest);
+        PostResponse foundPost = postService.findDetailPost(updatedPostId);
+
+        assertThat(foundPost.getContents()).isNotEqualTo(postCreateRequest.getContents());
+        assertThat(foundPost.getCategory().getName()).isNotEqualTo(postCreateRequest.getCategory().getName());
+    }
+
+    @Test
+    @DisplayName("게시물 삭제 확인용 테스트")
+    void deletePost() {
+        postService.deletePost(savedPostId);
+
+        assertThat(postService.findAllByCategory(savedCategory1.getId()).size()).isEqualTo(0);
     }
 
 }
