@@ -15,12 +15,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
+import static org.springframework.http.RequestEntity.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -44,7 +49,7 @@ class PostControllerTest {
     private UserRepository userRepository;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private static ObjectMapper objectMapper;
 
     private PostCreateRequest postCreateRequest;
 
@@ -81,24 +86,12 @@ class PostControllerTest {
                 .contents("this is sample post")
                 .category(savedCategory1)
                 .user(savedUser)
+                .photos(null)
                 .build();
 
         savedPostId = postService.createPost(postCreateRequest);
     }
 
-//    @Test
-//    @DisplayName("게시물 작성 테스트")
-//    void write() throws Exception {
-//        File f = new File("/Users/sample.png");
-//        FileInputStream fi1 = new FileInputStream(f);
-//        MockMultipartFile fstmp = new MockMultipartFile("upload", f.getName(), "multipart/form-data", fi1);
-//        mockMvc.perform(MockMvcRequestBuilders.fileUpload("/posts")
-//                        .file(fstmp)
-//                        .param("contents", "this is sample contents")
-//                        .param("category", "category1")
-//                        .param("user", "user1"))
-//                .andExpect(status().isOk());
-//    }
 
     @Test
     @DisplayName("게시물 상세 조회 테스트")

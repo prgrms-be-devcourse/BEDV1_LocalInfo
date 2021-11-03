@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 @Service
 public class PostService {
 
+    private final String NOT_FOUND_MESSAGE = "해당 게시글을 찾을 수 없습니다.";
+
     private final PostRepository postRepository;
 
     private final S3Service s3Service;
@@ -51,7 +53,7 @@ public class PostService {
     public PostResponse findDetailPost(Long postId) throws NotFoundException {
         return PostResponse.of(postRepository.findById(postId)
                 .filter(foundPost -> foundPost.getDeletedAt() == null)
-                .orElseThrow(() -> new NotFoundException("해당 게시글을 찾을 수 없습니다.")));
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_MESSAGE)));
     }
 
     @Transactional
