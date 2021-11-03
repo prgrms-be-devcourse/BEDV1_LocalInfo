@@ -40,6 +40,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-hateoas'
     implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.8'
     implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.2'
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.99'
+
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'mysql:mysql-connector-java'
     compileOnly 'org.projectlombok:lombok'
