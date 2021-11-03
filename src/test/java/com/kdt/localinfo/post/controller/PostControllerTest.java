@@ -9,14 +9,21 @@ import com.kdt.localinfo.user.entity.Region;
 import com.kdt.localinfo.user.entity.User;
 import com.kdt.localinfo.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
 @AutoConfigureMockMvc
@@ -92,4 +99,22 @@ class PostControllerTest {
 //                        .param("user", "user1"))
 //                .andExpect(status().isOk());
 //    }
+
+    @Test
+    @DisplayName("게시물 상세 조회 테스트")
+    void findDetailPost() throws Exception {
+        mockMvc.perform(get("/posts/{post-id}", savedPostId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("카테고리별 게시물 조회 테스트")
+    void findPostByCategory() throws Exception {
+        mockMvc.perform(get("/posts/categories/{category-id}", savedCategory1.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
 }

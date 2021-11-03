@@ -3,15 +3,22 @@ package com.kdt.localinfo.post.service;
 import com.kdt.localinfo.category.Category;
 import com.kdt.localinfo.category.CategoryRepository;
 import com.kdt.localinfo.post.dto.PostCreateRequest;
+import com.kdt.localinfo.post.dto.PostResponse;
 import com.kdt.localinfo.user.entity.Region;
 import com.kdt.localinfo.user.entity.User;
 import com.kdt.localinfo.user.repository.UserRepository;
+import javassist.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Transactional
 @SpringBootTest
@@ -65,6 +72,23 @@ class PostServiceTest {
                 .build();
 
         savedPostId = postService.createPost(postCreateRequest);
+    }
+
+    @Test
+    @DisplayName("게시물 조회 내용 확인용 테스트")
+    void findDetailPost() throws NotFoundException {
+        PostResponse foundPost = postService.findDetailPost(savedPostId);
+        assertThat(foundPost.getContents()).isEqualTo(postCreateRequest.getContents());
+    }
+
+    @Test
+    @DisplayName("카테고리별 게시물 조회 내용 확인용 테스트")
+    void findAllByCategory() {
+        List<PostResponse> findPostsByCategory1 = postService.findAllByCategory(savedCategory1.getId());
+        List<PostResponse> findPostsByCategory2 = postService.findAllByCategory(savedCategory2.getId());
+
+        assertThat(findPostsByCategory1.size()).isEqualTo(1);
+        assertThat(findPostsByCategory2.size()).isEqualTo(0);
     }
 
 }
