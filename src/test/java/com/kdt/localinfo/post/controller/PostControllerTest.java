@@ -133,6 +133,8 @@ class PostControllerTest {
 //                .andExpect(status().isOk());
 //    }
 
+
+
     @Test
     @DisplayName("게시물 삭제 테스트")
     void deletePost() throws Exception {
