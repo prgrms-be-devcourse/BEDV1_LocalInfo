@@ -51,15 +51,33 @@ public class Post extends BaseEntity {
     private List<Photo> photos = new ArrayList<>();
 
     @Builder
-    public Post(Long id, String contents, Region region, Category category, List<Photo> photos) {
+    public Post(Long id, String contents, Region region, Category category, User user, List<Photo> photos) {
         this.id = id;
         this.contents = contents;
         this.region = region;
+        this.user = user;
         this.photos = photos;
+        this.category = category;
         setCategory(category);
     }
 
-    //연관관계 편의 메서드 - user
+    public Long updatePost(String contents, Category category, List<Photo> photos) {
+        this.contents = contents;
+        this.category = category;
+        setCategory(category);
+        this.photos = photos;
+        return id;
+    }
+
+    public Long deletePost() {
+        deletedAt = LocalDateTime.now();
+        return id;
+    }
+
+    public void addComment(Comment comment) {
+        comment.setPost(this);
+    }
+
     public void setUser(User user) {
         if (Objects.nonNull(this.user)) {
             this.user.getPosts().remove(this);
@@ -68,33 +86,24 @@ public class Post extends BaseEntity {
         user.getPosts().add(this);
     }
 
-    //연관관계 편의 메서드 - comment
-    public void addComment(Comment comment) {
-        comment.setPost(this);
+    public void addPhoto(List<Photo> photos) {
+        this.photos = photos;
     }
 
     public void setComments(List<Comment> comments) {
         comments.forEach(this::addComment);
     }
 
-    //연관관계 편의 메서드 - photo
-    public void addPhoto(List<Photo> photos) {
-        this.photos = photos;
-    }
-
-    //연관관계 편의 메서드 - category
     public void setCategory(Category category) {
         this.category = category;
     }
 
-    public Long updatePost(String contents) {
+    public void setContents(String contents) {
         this.contents = contents;
-        return id;
     }
 
-    public Long deletePost() {
-        deletedAt = LocalDateTime.now();
-        return id;
+    public void setPhotos(List<Photo> photos) {
+        this.photos = photos;
     }
 
 }

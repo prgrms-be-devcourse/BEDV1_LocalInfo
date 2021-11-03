@@ -11,4 +11,6 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<Post, Long> {
     @Query(value = "SELECT url FROM Photo WHERE post_id = :id")
     List<Photo> findPhotoByPostId(@Param("id") Long postId);
+
+    List<Post> findPostByCategoryId(Long categoryId);
 }
