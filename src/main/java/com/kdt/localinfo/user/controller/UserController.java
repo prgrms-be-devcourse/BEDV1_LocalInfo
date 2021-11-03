@@ -43,7 +43,7 @@ public class UserController {
     }
 
     @PostMapping(produces = MediaTypes.HAL_JSON_VALUE, consumes = MediaTypes.HAL_JSON_VALUE)
-    public ResponseEntity<EntityModel<UserResponse>> create(@RequestBody @Validated UserRequest request, Errors errors) {
+    public ResponseEntity<EntityModel<UserResponse>> createUser(@RequestBody @Validated UserRequest request, Errors errors) {
         if (errors.hasErrors()) {
             throw new ValidationException("UserRequest has invalid input error", errors);
         }
@@ -71,6 +71,9 @@ public class UserController {
     @GetMapping(produces = MediaTypes.HAL_JSON_VALUE, value = "/{id}")
     public ResponseEntity<EntityModel<UserResponse>> getUser(@PathVariable Long id) throws Exception {
         UserResponse userResponse = userService.getUser(id);
+        if (userResponse == null) {
+            return ResponseEntity.notFound().build();
+        }
 
         EntityModel<UserResponse> entityModel = EntityModel.of(userResponse,
                 getLinkAddress().slash(userResponse.getId()).withSelfRel(),
