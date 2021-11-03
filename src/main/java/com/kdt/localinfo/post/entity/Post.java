@@ -36,7 +36,7 @@ public class Post extends BaseEntity {
     private Region region;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(name = "category_id", nullable = false, foreignKey = @ForeignKey(name = "fk_post_to_category"))
     private Category category;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
@@ -44,7 +44,7 @@ public class Post extends BaseEntity {
 
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false, foreignKey = @ForeignKey(name = "fk_post_to_user"))
     private User user;
 
     @OneToMany(mappedBy = "post")
