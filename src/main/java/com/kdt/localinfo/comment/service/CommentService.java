@@ -49,7 +49,7 @@ public class CommentService {
         return commentConverter.converterToCommentResponse(commentEntity);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<CommentResponse> findAllByPostId(Long postId) throws NotFoundException {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new NotFoundException("게시물에 대한 정보를 찾을 수 없습니다."));
