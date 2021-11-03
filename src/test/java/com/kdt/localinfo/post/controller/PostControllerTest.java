@@ -119,10 +119,9 @@ class PostControllerTest {
                 .andDo(print());
     }
 
-    @Test
-    @DisplayName("게시물 수정 테스트")
-    void updatePost() throws Exception {
-
+//    @Test
+//    @DisplayName("게시물 수정 테스트")
+//    void updatePost() throws Exception {
 //        File f = new File("/Users/sample.png");
 //        FileInputStream fi1 = new FileInputStream(f);
 //        MockMultipartFile fstmp = new MockMultipartFile("upload", f.getName(), "multipart/form-data", fi1);
@@ -132,8 +131,7 @@ class PostControllerTest {
 //                        .param("contents", "this is updated contents")
 //                        .param("category", "category1"))
 //                .andExpect(status().isOk());
-
-    }
+//    }
 
     @Test
     @DisplayName("게시물 삭제 테스트")

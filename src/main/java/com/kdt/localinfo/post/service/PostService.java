@@ -20,6 +20,8 @@ import java.util.stream.Collectors;
 @Service
 public class PostService {
 
+    private final String NOT_FOUND_MESSAGE = "해당 게시글을 찾을 수 없습니다.";
+    private final String NOT_DELETE_MESSAGE = "해당 게시글을 지울 수 없습니다.";
     private final PostRepository postRepository;
 
     private final S3Service s3Service;
@@ -31,9 +33,9 @@ public class PostService {
 
     @Transactional
     public Long createPost(PostCreateRequest request) throws IOException {
-        List<Photo> photoUrls = new ArrayList<>();
         List<MultipartFile> photos = request.getPhotos();
 
+        List<Photo> photoUrls = new ArrayList<>();
         if (!Objects.isNull(photos)) {
             for (MultipartFile photo : photos) {
                 Photo photoEntity = Photo.builder()
@@ -52,7 +54,7 @@ public class PostService {
     public PostResponse findDetailPost(Long postId) throws NotFoundException {
         return PostResponse.of(postRepository.findById(postId)
                 .filter(foundPost -> foundPost.getDeletedAt() == null)
-                .orElseThrow(() -> new NotFoundException("해당 게시글을 찾을 수 없습니다.")));
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_MESSAGE)));
     }
 
     @Transactional
@@ -84,18 +86,19 @@ public class PostService {
                     postRepository.save(updated);
                     return postId;
                 })
-                .orElseThrow(() -> new NotFoundException("해당 게시글을 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_MESSAGE));
     }
 
     @Transactional
     public Long deletePost(Long postId) {
-        return postRepository.findById(postId)
+        postRepository.findById(postId)
                 .filter(unidentifiedPost -> unidentifiedPost.getDeletedAt() == null)
                 .map(foundPost -> {
                     foundPost.deletePost();
                     postRepository.save(foundPost);
                     return postId;
                 })
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시글을 지울 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException(NOT_DELETE_MESSAGE));
+        return postId;
     }
 }
