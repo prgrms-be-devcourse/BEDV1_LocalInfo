@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Builder
@@ -39,6 +40,10 @@ public class Comment extends BaseEntity {
         }
         this.post = post;
         post.getComments().add(this);
+    }
+
+    public void setDeleted(){
+        this.deletedAt = LocalDateTime.now();
     }
 
     public void setUser(User user) {
