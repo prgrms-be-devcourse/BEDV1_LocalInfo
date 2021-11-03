@@ -6,10 +6,7 @@ import com.kdt.localinfo.user.dto.UserResponse;
 import com.kdt.localinfo.user.entity.User;
 import com.kdt.localinfo.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,7 +32,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserControllerTest {
 
     private final String BASE_URL = "/api/users";
@@ -52,29 +48,12 @@ class UserControllerTest {
     @Autowired
     UserRepository userRepository;
 
-    @BeforeAll
-    public void setUp() throws Exception {
+    @BeforeEach
+    public void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
                 .addFilter(new CharacterEncodingFilter("UTF-8", true))
                 .alwaysDo(print())
                 .build();
-        UserRequest userRequest = UserRequest.builder()
-                .name("관리자")
-                .nickname("admin")
-                .email("admin@mail.com")
-                .password("0000")
-                .role("ADMIN")
-                .neighborhood("동천동")
-                .district("수지구")
-                .city("용인시")
-                .build();
-        mockMvc.perform(post(BASE_URL)
-                .accept(MediaTypes.HAL_JSON_VALUE)
-                .contentType(MediaTypes.HAL_JSON_VALUE)
-                .content(objectMapper.writeValueAsString(userRequest)))
-                .andDo(print())
-                .andExpect(status().isCreated())
-                .andReturn();
     }
 
     @Test
@@ -124,6 +103,21 @@ class UserControllerTest {
     @Test
     @DisplayName("유저 단건 조회 - 성공")
     public void getUser() throws Exception {
+        UserRequest userRequest = UserRequest.builder()
+                .name("심수현")
+                .nickname("poogle")
+                .email("suhyun@mail.com")
+                .password("1234")
+                .role("GENERAL")
+                .neighborhood("동천동")
+                .district("수지구")
+                .city("용인시")
+                .build();
+        mockMvc.perform(post(BASE_URL)
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .contentType(MediaTypes.HAL_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(userRequest)))
+                .andReturn();
         mockMvc.perform(get(BASE_URL + "/{id}", 1L)
                 .accept(MediaTypes.HAL_JSON_VALUE))
                 .andDo(print())
