@@ -37,8 +37,8 @@ import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.BDDMockito.*;
-import static org.mockito.Mockito.mock;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
 
 @Slf4j
@@ -97,8 +97,8 @@ class CommentServiceTest {
         given(commentConverter.converterToCommentPhoto(comment, url)).willReturn(commentPhoto);
         given(commentRepository.save(comment)).willReturn(comment);
         given(commentPhotoRepository.saveAll(commentPhotos)).willReturn(commentPhotos);
-        given(commentConverter.converterToCommentResponse(comment,List.of(url))).willReturn(expectCommentResponse);
-        given(s3Uploader.upload(firstFile,"comment-photo")).willReturn(url);
+        given(commentConverter.converterToCommentResponse(comment, List.of(url))).willReturn(expectCommentResponse);
+        given(s3Uploader.upload(firstFile, "comment-photo")).willReturn(url);
 
         // WHEN
         CommentResponse commentResponse = commentService.save(commentSaveRequest, post.getId(), List.of(firstFile));
@@ -114,11 +114,15 @@ class CommentServiceTest {
     }
 
     @Test
+    @Transactional(readOnly = true)
     @DisplayName("게시글 아이디로 댓글 조회 Service")
     void findAllByPostIdTest() throws NotFoundException {
 
         // GIVEN
         Comment comment = TestEntityFactory.commentBuilder().build();
+
+        String url = "2544a8cf-b522-48f4-915a-6425018c5957-test2.jpg";
+        List<String> urls = List.of(url);
 
         CommentResponse commentResponse = new CommentResponse(comment.getId(),
                 comment.getContents(),
@@ -126,18 +130,19 @@ class CommentServiceTest {
                 comment.getUpdatedAt(),
                 comment.getUser().getRegion().getNeighborhood(),
                 comment.getParentId(),
-                checkedDepth(comment.getParentId()));
+                checkedDepth(comment.getParentId())
+                , urls);
 
         List<Comment> returnComments = new ArrayList<>();
-        returnComments.add(comment);
         returnComments.add(comment);
 
         Post post = comment.getPost();
         Long postId = post.getId();
 
+        new CommentPhoto(url, comment);
         given(commentRepository.findAllByPost(post)).willReturn(returnComments);
         given(postRepository.findById(postId)).willReturn(Optional.of(post));
-        given(commentConverter.converterToCommentResponse(comment)).willReturn(commentResponse);
+        given(commentConverter.converterToCommentResponse(comment, urls)).willReturn(commentResponse);
 
         // WHEN
         List<CommentResponse> commentResponses = commentService.findAllByPostId(postId);
@@ -145,13 +150,14 @@ class CommentServiceTest {
         // THEN
         then(postRepository).should().findById(postId);
         then(commentRepository).should().findAllByPost(post);
-        then(commentConverter).should(times(2)).converterToCommentResponse(comment);
+        then(commentConverter).should(times(1)).converterToCommentResponse(comment, urls);
 
-        assertThat(commentResponses.size(), is(2));
+        assertThat(commentResponses.size(), is(1));
         commentResponses.forEach(commentResponse1 -> {
             assertThat(commentResponse1.getNickName(), is("nickName"));
             assertThat(commentResponse1.getDepth(), is(0L));
             assertThat(commentResponse1.getContents(), is("댓글"));
+            assertThat(commentResponse1.getUrls(), is(urls));
         });
     }
 

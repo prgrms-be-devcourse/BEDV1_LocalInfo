@@ -6,6 +6,8 @@ import com.kdt.localinfo.category.CategoryRepository;
 import com.kdt.localinfo.comment.dto.CommentSaveRequest;
 import com.kdt.localinfo.comment.entity.Comment;
 import com.kdt.localinfo.comment.repository.CommentRepository;
+import com.kdt.localinfo.photo.CommentPhoto;
+import com.kdt.localinfo.photo.CommentPhotoRepository;
 import com.kdt.localinfo.post.entity.Post;
 import com.kdt.localinfo.post.repository.PostRepository;
 import com.kdt.localinfo.user.entity.Region;
@@ -56,6 +58,9 @@ class CommentControllerTest {
 
     @Autowired
     private CommentRepository commentRepository;
+
+    @Autowired
+    private CommentPhotoRepository commentPhotoRepository;
 
     @Test
     @DisplayName("댓글 생성")
@@ -141,11 +146,13 @@ class CommentControllerTest {
                 .build();
         comment2.setPost(savePost);
         comment2.setUser(saveUser);
-
         comment.setDeleted();
-
         commentRepository.save(comment);
         commentRepository.save(comment2);
+
+        String photoUrl = "https://localinfo-photo.s3.ap-northeast-2.amazonaws.com/comment-photo/f63e66a8-9840-4284-914a-e6c69ed48fef-test.jpg";
+        CommentPhoto commentPhoto = new CommentPhoto(photoUrl, comment2);
+        commentPhotoRepository.save(commentPhoto);
 
         mockMvc.perform(get("/posts/{post-id}/comments", savePost.getId())
                         .accept(MediaTypes.HAL_JSON_VALUE)
