@@ -3,8 +3,8 @@ package com.kdt.localinfo.comment.controller;
 import com.kdt.localinfo.comment.dto.CommentResponse;
 import com.kdt.localinfo.comment.dto.CommentSaveRequest;
 import com.kdt.localinfo.comment.service.CommentService;
-import com.kdt.localinfo.common.ErrorResources;
-import com.kdt.localinfo.common.ValidationException;
+import com.kdt.localinfo.error.ErrorResources;
+import com.kdt.localinfo.error.InvalidInputException;
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.EntityModel;
@@ -35,8 +35,8 @@ public class CommentController {
         return ResponseEntity.notFound().build();
     }
 
-    @ExceptionHandler({ValidationException.class})
-    public ResponseEntity<EntityModel<Errors>> badRequest(ValidationException ex) {
+    @ExceptionHandler({InvalidInputException.class})
+    public ResponseEntity<EntityModel<Errors>> badRequest(InvalidInputException ex) {
         return ResponseEntity.badRequest().body(ErrorResources.modelOf(ex.getErrors()));
     }
 
@@ -44,7 +44,7 @@ public class CommentController {
     public ResponseEntity<EntityModel<CommentResponse>> save(@PathVariable("post-id") Long postId, @RequestBody @Validated CommentSaveRequest commentSaveRequest, Errors errors) throws NotFoundException, NoSuchMethodException {
         log.info("save execute");
         if (errors.hasErrors()) {
-            throw new ValidationException("CommentSaveRequest Validation Error", errors);
+            throw new InvalidInputException("CommentSaveRequest Validation Error", errors);
         }
 
         CommentResponse commentResponse = commentService.save(commentSaveRequest, postId);
