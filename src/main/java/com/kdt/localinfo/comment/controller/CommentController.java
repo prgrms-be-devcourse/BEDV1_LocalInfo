@@ -14,7 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
@@ -32,9 +34,14 @@ public class CommentController {
         this.commentService = commentService;
     }
 
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<String> ioExceptionHandler(IOException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<Object> notFoundHandler(NotFoundException e) {
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<String> notFoundHandler(NotFoundException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
 
     @ExceptionHandler({ValidationException.class})
@@ -43,19 +50,24 @@ public class CommentController {
     }
 
     @PostMapping(path = "/posts/{post-id}/comments", produces = MediaTypes.HAL_JSON_VALUE, consumes = MediaTypes.HAL_JSON_VALUE)
-    public ResponseEntity<EntityModel<CommentResponse>> save(@PathVariable("post-id") Long postId, @RequestBody @Validated CommentSaveRequest commentSaveRequest, Errors errors) throws NotFoundException {
+    public ResponseEntity<EntityModel<CommentResponse>> save(
+            @PathVariable("post-id") Long postId,
+            @RequestParam(value = "images", required = false) List<MultipartFile> multipartFiles,
+            @RequestBody @Validated CommentSaveRequest commentSaveRequest,
+            Errors errors) throws NotFoundException, IOException {
+
         log.info("save execute");
         if (errors.hasErrors()) {
             throw new ValidationException("CommentSaveRequest Validation Error", errors);
         }
 
-        CommentResponse commentResponse = commentService.save(commentSaveRequest, postId);
+        CommentResponse commentResponse = commentService.save(commentSaveRequest, postId, multipartFiles);
 
-        URI createdUri = linkTo(methodOn(CommentController.class).save(postId, commentSaveRequest, errors)).toUri();
+        URI createdUri = linkTo(methodOn(CommentController.class).save(postId, multipartFiles, commentSaveRequest, errors)).toUri();
 
         EntityModel<CommentResponse> entityModel = EntityModel.of(commentResponse,
-                linkTo(methodOn(CommentController.class).save(postId, commentSaveRequest, errors)).withSelfRel()
-                , linkTo(methodOn(CommentController.class).findAllByPostId(postId)).withRel("findAllByPostId"));
+                linkTo(methodOn(CommentController.class).save(postId, multipartFiles, commentSaveRequest, errors)).withSelfRel(),
+                linkTo(methodOn(CommentController.class).findAllByPostId(postId)).withRel("findAllByPostId"));
 
         return ResponseEntity.created(createdUri).body(entityModel);
     }

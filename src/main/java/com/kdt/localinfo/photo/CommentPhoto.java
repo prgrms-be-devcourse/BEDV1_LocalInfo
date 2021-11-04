@@ -1,10 +1,14 @@
 package com.kdt.localinfo.photo;
 
 import com.kdt.localinfo.comment.entity.Comment;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Objects;
 
+@Getter
+@NoArgsConstructor
 @Entity
 public class CommentPhoto {
 
@@ -20,7 +24,12 @@ public class CommentPhoto {
     @JoinColumn(name = "comment_id", foreignKey = @ForeignKey(name = "fk_photo_to_comment"))
     private Comment comment;
 
-    public void setPost(Comment comment) {
+    public CommentPhoto(String url, Comment comment) {
+        this.url = url;
+        setComment(comment);
+    }
+
+    public void setComment(Comment comment) {
         if (Objects.nonNull(this.comment)) {
             this.comment.getCommentPhotos().remove(this);
         }
