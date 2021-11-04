@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,8 +40,11 @@ public class PostService {
     }
 
     @Transactional
-    public Post createPost(List<MultipartFile> multipartFiles, PostCreateRequest request) throws IOException, NotFoundException {
+    public Post createPost(PostCreateRequest request) throws IOException, NotFoundException {
+        List<MultipartFile> multipartFiles = request.getPhotos();
+
         List<Photo> photos = new ArrayList<>();
+
         if (!Objects.isNull(multipartFiles)) {
             for (MultipartFile photo : multipartFiles) {
                 Photo photoEntity = Photo.builder()
@@ -52,10 +54,10 @@ public class PostService {
             }
         }
 
-        User user = userRepository.findById(request.getUserId())
+        User user = userRepository.findById(Long.valueOf(request.getUserId()))
                 .orElseThrow(() -> new NotFoundException("해당 유저를 찾을 수 없습니다."));
 
-        Category category = categoryRepository.findById(request.getCategoryId())
+        Category category = categoryRepository.findById(Long.valueOf(request.getCategoryId()))
                 .orElseThrow(() -> new NotFoundException("해당 카테고리 아이디는 존재하지 않습니다."));
 
         return Post.builder()
@@ -67,7 +69,8 @@ public class PostService {
     }
 
     @Transactional
-    public Long savePost(Post post) {
+    public Long savePost(PostCreateRequest request) throws IOException, NotFoundException {
+        Post post = createPost(request);
         Post savedPost = postRepository.save(post);
         return savedPost.getId();
     }
@@ -88,16 +91,29 @@ public class PostService {
     }
 
     @Transactional
-    public Long updatePost(Long postId, PostUpdateRequest request) throws IOException, NotFoundException {
-        Category category = categoryRepository.findById(request.getCategoryId())
+    public Long updatePost(PostUpdateRequest request) throws NotFoundException, IOException {
+        List<MultipartFile> multipartFiles = request.getPhotos();
+        List<Photo> photos = new ArrayList<>();
+
+        if (!Objects.isNull(multipartFiles)) {
+            for (MultipartFile photo : multipartFiles) {
+                Photo photoEntity = Photo.builder()
+                        .url(s3Service.upload(photo))
+                        .build();
+                photos.add(photoEntity);
+            }
+        }
+
+        Category category = categoryRepository.findById(Long.valueOf(request.getCategoryId()))
                 .orElseThrow(() -> new NotFoundException("해당 카테고리 아이디는 존재하지 않습니다."));
 
-        Post foundPost = postRepository.findById(postId)
+        Post foundPost = postRepository.findById(Long.valueOf(request.getPostId()))
                 .filter(unidentifiedPost -> unidentifiedPost.getDeletedAt() == null)
                 .orElseThrow(() -> new NotFoundException(NOT_FOUND_MESSAGE));
 
         foundPost.setContents(request.getContents());
         foundPost.setCategory(category);
+        foundPost.setPhotos(photos);
 
         Post saved = postRepository.save(foundPost);
         return saved.getId();

@@ -3,18 +3,13 @@ package com.kdt.localinfo.post.controller;
 import com.kdt.localinfo.post.dto.PostCreateRequest;
 import com.kdt.localinfo.post.dto.PostResponse;
 import com.kdt.localinfo.post.dto.PostUpdateRequest;
-import com.kdt.localinfo.post.entity.Post;
 import com.kdt.localinfo.post.service.PostService;
 import javassist.NotFoundException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -26,18 +21,11 @@ public class PostController {
         this.postService = postService;
     }
 
-    @PostMapping(value = "/posts", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void create(@RequestPart("file") List<MultipartFile> multipartFiles,
-                       @RequestPart("request") PostCreateRequest request,
-                       HttpServletResponse response) throws NotFoundException, IOException {
+    @PostMapping(value = "/posts", consumes = {"multipart/form-data"})
+    public ResponseEntity<Void> write(@ModelAttribute PostCreateRequest request) throws IOException, NotFoundException {
+        Long postId = postService.savePost(request);
 
-        if (multipartFiles.size() == 0) {
-            multipartFiles = new ArrayList<>();
-        }
-        Post post = postService.createPost(multipartFiles, request);
-        postService.savePost(post);
-
-        response.setStatus(HttpStatus.CREATED.value());
+        return ResponseEntity.created(URI.create("/api/posts/" + postId)).build();
     }
 
     @GetMapping("posts/{post-id}")
@@ -52,10 +40,9 @@ public class PostController {
     }
 
     @PutMapping(value = "/posts/{post-id}", consumes = {"multipart/form-data"})
-    public void updatePost(@PathVariable(name = "post-id") Long postId, @RequestBody PostUpdateRequest request,
-                           HttpServletResponse response) throws NotFoundException, IOException {
-        postService.updatePost(postId, request);
-        response.setStatus(HttpStatus.OK.value());
+    public ResponseEntity<Void> updatePost(@ModelAttribute PostUpdateRequest request) throws NotFoundException, IOException {
+        postService.updatePost(request);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/posts/{post-id}")
