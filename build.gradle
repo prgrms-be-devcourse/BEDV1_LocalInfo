@@ -96,3 +96,7 @@ task copyConfigSettings(type: Copy) {
 build {
     dependsOn copyConfigSettings
 }
+
+jar {
+    enabled = false
+}
