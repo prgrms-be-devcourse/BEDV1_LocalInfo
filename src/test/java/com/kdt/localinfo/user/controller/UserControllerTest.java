@@ -3,10 +3,14 @@ package com.kdt.localinfo.user.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kdt.localinfo.user.dto.UserRequest;
 import com.kdt.localinfo.user.dto.UserResponse;
+import com.kdt.localinfo.user.entity.Region;
+import com.kdt.localinfo.user.entity.Role;
 import com.kdt.localinfo.user.entity.User;
 import com.kdt.localinfo.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,6 +24,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.util.Objects;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -95,7 +100,7 @@ class UserControllerTest {
     @DisplayName("유저 리스트 조회")
     public void getUsers() throws Exception {
         mockMvc.perform(get(BASE_URL)
-                .accept(MediaTypes.HAL_JSON_VALUE))
+                        .accept(MediaTypes.HAL_JSON_VALUE))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -103,23 +108,23 @@ class UserControllerTest {
     @Test
     @DisplayName("유저 단건 조회 - 성공")
     public void getUser() throws Exception {
-        UserRequest userRequest = UserRequest.builder()
-                .name("심수현")
-                .nickname("poogle")
-                .email("suhyun@mail.com")
-                .password("1234")
-                .role("GENERAL")
+        Region region = Region.builder()
                 .neighborhood("동천동")
                 .district("수지구")
                 .city("용인시")
                 .build();
-        mockMvc.perform(post(BASE_URL)
-                .accept(MediaTypes.HAL_JSON_VALUE)
-                .contentType(MediaTypes.HAL_JSON_VALUE)
-                .content(objectMapper.writeValueAsString(userRequest)))
-                .andReturn();
-        mockMvc.perform(get(BASE_URL + "/{id}", 1L)
-                .accept(MediaTypes.HAL_JSON_VALUE))
+        User user = User.builder()
+                .name("심수현")
+                .nickname("poogle")
+                .email("suhyun@mail.c")
+                .password("1234")
+                .roles(Set.of(Role.valueOf("GENERAL")))
+                .region(region)
+                .build();
+        User savedUser = userRepository.save(user);
+
+        mockMvc.perform(get(BASE_URL + "/{id}", savedUser.getId())
+                        .accept(MediaTypes.HAL_JSON_VALUE))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -128,7 +133,7 @@ class UserControllerTest {
     @DisplayName("유저 단건 조회 - 실패")
     public void getUserNotFound() throws Exception {
         mockMvc.perform(get(BASE_URL + "/{id}", -1L)
-                .accept(MediaTypes.HAL_JSON_VALUE))
+                        .accept(MediaTypes.HAL_JSON_VALUE))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
