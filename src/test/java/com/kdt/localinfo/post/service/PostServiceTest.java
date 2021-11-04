@@ -5,6 +5,7 @@ import com.kdt.localinfo.category.CategoryRepository;
 import com.kdt.localinfo.post.dto.PostCreateRequest;
 import com.kdt.localinfo.post.dto.PostResponse;
 import com.kdt.localinfo.post.dto.PostUpdateRequest;
+import com.kdt.localinfo.post.entity.Post;
 import com.kdt.localinfo.user.entity.Region;
 import com.kdt.localinfo.user.entity.User;
 import com.kdt.localinfo.user.repository.UserRepository;
@@ -15,9 +16,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,7 +50,7 @@ class PostServiceTest {
     private PostCreateRequest postCreateRequest;
 
     @BeforeEach
-    void setUp() throws IOException {
+    void setUp() throws IOException, NotFoundException {
         Category category = new Category(1L, "동네생활");
         savedCategory1 = categoryRepository.save(category);
 
@@ -68,13 +71,17 @@ class PostServiceTest {
                 .build();
         savedUser = userRepository.save(user);
 
+        List<MultipartFile> multipartFiles = new ArrayList<>();
+
         postCreateRequest = PostCreateRequest.builder()
                 .contents("this is sample post")
-                .category(savedCategory1)
-                .user(savedUser)
+                .categoryId(savedCategory1.getId())
+                .userId(savedUser.getId())
                 .build();
 
-        savedPostId = postService.createPost(postCreateRequest);
+        Post post = postService.createPost(multipartFiles, postCreateRequest);
+
+        savedPostId = postService.savePost(post);
     }
 
     @Test
@@ -98,23 +105,21 @@ class PostServiceTest {
     @DisplayName("게시물 수정 내용 확인용 테스트")
     void updatePost() throws NotFoundException, IOException {
         PostUpdateRequest postUpdateRequest = PostUpdateRequest.builder()
-                .id(savedPostId)
                 .contents("this is updated post")
-                .category(savedCategory2)
+                .categoryId(savedCategory2.getId())
                 .build();
 
-        Long updatedPostId = postService.updatePost(postUpdateRequest.getId(), postUpdateRequest);
+        Long updatedPostId = postService.updatePost(savedPostId, postUpdateRequest);
         PostResponse foundPost = postService.findDetailPost(updatedPostId);
 
         assertThat(foundPost.getContents()).isNotEqualTo(postCreateRequest.getContents());
-        assertThat(foundPost.getCategory().getName()).isNotEqualTo(postCreateRequest.getCategory().getName());
+        assertThat(foundPost.getCategory().getId()).isNotEqualTo(postCreateRequest.getCategoryId());
     }
 
     @Test
     @DisplayName("게시물 삭제 확인용 테스트")
     void deletePost() {
         postService.deletePost(savedPostId);
-
         assertThat(postService.findAllByCategory(savedCategory1.getId()).size()).isEqualTo(0);
     }
 

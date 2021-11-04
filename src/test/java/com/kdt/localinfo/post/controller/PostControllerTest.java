@@ -4,10 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kdt.localinfo.category.Category;
 import com.kdt.localinfo.category.CategoryRepository;
 import com.kdt.localinfo.post.dto.PostCreateRequest;
+import com.kdt.localinfo.post.entity.Post;
 import com.kdt.localinfo.post.service.PostService;
 import com.kdt.localinfo.user.entity.Region;
 import com.kdt.localinfo.user.entity.User;
 import com.kdt.localinfo.user.repository.UserRepository;
+import javassist.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,11 +20,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -44,9 +48,6 @@ class PostControllerTest {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
     private PostCreateRequest postCreateRequest;
 
     private Long savedPostId;
@@ -58,7 +59,7 @@ class PostControllerTest {
     private Category savedCategory2;
 
     @BeforeEach
-    void saveSampleData() throws IOException {
+    void saveSampleData() throws IOException, NotFoundException {
         Category category = new Category(1L, "동네생활");
         Category category2 = new Category(2L, "동네맛집");
         savedCategory1 = categoryRepository.save(category);
@@ -78,27 +79,27 @@ class PostControllerTest {
                 .build();
         savedUser = userRepository.save(user);
 
+        List<MultipartFile> multipartFiles = new ArrayList<>();
         postCreateRequest = PostCreateRequest.builder()
                 .contents("this is sample post")
-                .category(savedCategory1)
-                .user(savedUser)
+                .categoryId(savedCategory1.getId())
+                .userId(savedUser.getId())
                 .build();
 
-        savedPostId = postService.createPost(postCreateRequest);
+        Post post = postService.createPost(multipartFiles, postCreateRequest);
+        savedPostId = postService.savePost(post);
     }
 
 //    @Test
 //    @DisplayName("게시물 작성 테스트")
 //    void write() throws Exception {
-//        File f = new File("/Users/sample.png");
-//        FileInputStream fi1 = new FileInputStream(f);
-//        MockMultipartFile fstmp = new MockMultipartFile("upload", f.getName(), "multipart/form-data", fi1);
-//        mockMvc.perform(MockMvcRequestBuilders.fileUpload("/posts")
-//                        .file(fstmp)
-//                        .param("contents", "this is sample contents")
-//                        .param("category", "category1")
-//                        .param("user", "user1"))
-//                .andExpect(status().isOk());
+//        ArrayList<MultipartFile> multipartFiles = new ArrayList<>();
+//        mockMvc.perform(multipart("/posts")
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .content(objectMapper.writeValueAsString(postCreateRequest))
+//                        .content(multipartFiles))
+//                .andExpect(status().isCreated())
+//                .andDo(print());
 //    }
 
     @Test

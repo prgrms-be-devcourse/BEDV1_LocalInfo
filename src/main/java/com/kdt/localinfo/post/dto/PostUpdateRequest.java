@@ -17,17 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 public class PostUpdateRequest {
 
-    private Long id;
     private String contents;
-    private Category category;
-    private List<MultipartFile> photos;
-
-    public Post toUpdateEntity(Post post, List<Photo> photos) {
-        post.setCategory(category);
-        post.setContents(contents);
-        post.setPhotos(photos);
-
-        return post;
-    }
+    private Long categoryId;
 
 }

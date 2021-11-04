@@ -19,17 +19,7 @@ import java.util.List;
 public class PostCreateRequest {
 
     private String contents;
-    private Category category;
-    private User user;
-    private List<MultipartFile> photos;
+    private Long categoryId;
+    private Long userId;
 
-    public Post toEntity(List<Photo> photos) {
-        return Post.builder()
-                .contents(contents)
-                .region(user.getRegion())
-                .category(category)
-                .user(user)
-                .photos(photos)
-                .build();
-    }
 }
