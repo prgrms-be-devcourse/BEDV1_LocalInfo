@@ -83,10 +83,16 @@ public class CommentService {
 
         List<Comment> comments = commentRepository.findAllByPost(post);
 
-        return comments.stream()
+        List<CommentResponse> commentResponses = comments.stream()
                 .filter(comment -> comment.getDeletedAt() == null)
-                .map(commentConverter::converterToCommentResponse)
+                .map(comment -> {
+                    List<CommentPhoto> commentPhotos = comment.getCommentPhotos();
+                    List<String> photoUrls = commentPhotos.stream().map(CommentPhoto::getUrl).collect(Collectors.toList());
+                    return commentConverter.converterToCommentResponse(comment, photoUrls);
+                })
                 .collect(Collectors.toList());
+
+        return commentResponses;
     }
 
     private List<String> fileUpload(List<MultipartFile> multipartFiles) throws IOException {
@@ -94,8 +100,8 @@ public class CommentService {
 
         if (multipartFiles != null) {
             for (MultipartFile multipartFile : multipartFiles) {
-                    String upload = s3Uploader.upload(multipartFile, "comment-photo");
-                    uploadUrls.add(upload);
+                String upload = s3Uploader.upload(multipartFile, "comment-photo");
+                uploadUrls.add(upload);
             }
         }
 
