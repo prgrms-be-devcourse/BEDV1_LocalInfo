@@ -11,21 +11,29 @@ import com.kdt.localinfo.post.repository.PostRepository;
 import com.kdt.localinfo.user.entity.Region;
 import com.kdt.localinfo.user.entity.User;
 import com.kdt.localinfo.user.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.hateoas.MediaTypes;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Slf4j
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @SpringBootTest
@@ -75,13 +83,23 @@ class CommentControllerTest {
         Post savePost = postRepository.save(post1);
 
         CommentSaveRequest commentSaveRequest = new CommentSaveRequest(saveUser.getId(), "댓글 생성해주세요.");
-        mockMvc.perform(post("/posts/{post-id}/comments", savePost.getId())
+
+        Path directoryPath = Paths.get("comment-photo");
+        File imageFile = new File(directoryPath + "\\test.jpg");
+        File imageFile2 = new File(directoryPath + "\\test2.jpg");
+        MockMultipartFile firstFile = new MockMultipartFile("images", "test.jpg", null, Files.readAllBytes(imageFile.toPath()));
+        MockMultipartFile secondFile = new MockMultipartFile("images", "test2.jpg", null, Files.readAllBytes(imageFile2.toPath()));
+
+        mockMvc.perform(multipart("/posts/{post-id}/comments", savePost.getId())
+                        .file(firstFile)
+                        .file(secondFile)
                         .accept(MediaTypes.HAL_JSON_VALUE)
                         .contentType(MediaTypes.HAL_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(commentSaveRequest))
                 )
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("_links.self").exists())
+                .andExpect(jsonPath("_links.findAllByPostId").exists())
                 .andDo(print());
     }
 
