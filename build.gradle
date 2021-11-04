@@ -61,6 +61,15 @@ jacocoTestReport {
         html.enabled true
         html.destination file("$buildDir/jacocoHtml")
     }
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    excludes: [
+                            '**/com/kdt/localinfo/error/**'
+                    ]
+            )
+        }))
+    }
     finalizedBy 'jacocoTestCoverageVerification'
 }
 
@@ -95,4 +104,8 @@ task copyConfigSettings(type: Copy) {
 
 build {
     dependsOn copyConfigSettings
+}
+
+jar {
+    enabled=false
 }
