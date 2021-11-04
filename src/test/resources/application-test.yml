@@ -13,3 +13,10 @@ spring:
       ddl-auto: create-drop
     database-platform: org.hibernate.dialect.MySQL8Dialect
     show-sql: true
+
+server:
+  servlet:
+    encoding:
+      force: true
+      enabled: true
+      charset: UTF-8

@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Builder
@@ -23,11 +24,11 @@ public class Comment extends BaseEntity {
     private Long id;
     private String contents;
 
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "fk_comment_to_user"))
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    @JoinColumn(name = "post_id")
+    @JoinColumn(name = "post_id", foreignKey = @ForeignKey(name = "fk_comment_to_post"))
     @ManyToOne(fetch = FetchType.LAZY)
     private Post post;
 
@@ -39,6 +40,10 @@ public class Comment extends BaseEntity {
         }
         this.post = post;
         post.getComments().add(this);
+    }
+
+    public void setDeleted(){
+        this.deletedAt = LocalDateTime.now();
     }
 
     public void setUser(User user) {
