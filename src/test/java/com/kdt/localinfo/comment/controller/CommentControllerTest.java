@@ -3,6 +3,7 @@ package com.kdt.localinfo.comment.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kdt.localinfo.category.Category;
 import com.kdt.localinfo.category.CategoryRepository;
+import com.kdt.localinfo.comment.dto.CommentChangeRequest;
 import com.kdt.localinfo.comment.dto.CommentSaveRequest;
 import com.kdt.localinfo.comment.entity.Comment;
 import com.kdt.localinfo.comment.repository.CommentRepository;
@@ -159,6 +160,64 @@ class CommentControllerTest {
                         .contentType(MediaTypes.HAL_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded.commentResponseList..contents").value("댓글2"))
+                .andExpect(jsonPath("_links.self").exists())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("댓글 수정")
+    void changedCommentTest() throws Exception {
+        Region region = Region.builder()
+                .city("고양시")
+                .district("덕양구")
+                .neighborhood("행신동")
+                .build();
+        User user = User.builder()
+                .email("email1")
+                .region(region)
+                .nickname("nickname")
+                .password("password")
+                .name("name")
+                .build();
+        User saveUser = userRepository.save(user);
+
+        Category category = new Category(1L, "동네생활");
+        Category saveCategory = categoryRepository.save(category);
+
+        Post post1 = Post.builder()
+                .contents("this is sample post")
+                .region(region)
+                .category(saveCategory).build();
+        post1.setUser(saveUser);
+        Post savePost = postRepository.save(post1);
+
+        Comment comment = Comment.builder()
+                .contents("댓글")
+                .build();
+        comment.setPost(savePost);
+        comment.setUser(saveUser);
+        Comment savedComment = commentRepository.save(comment);
+
+        String photoUrl = "https://localinfo-photo.s3.ap-northeast-2.amazonaws.com/comment-photo/01806ddd-0ff8-4152-a156-e2c2d9b4050c-test.jpg";
+        CommentPhoto commentPhoto = new CommentPhoto(photoUrl, comment);
+        CommentPhoto savedPhoto = commentPhotoRepository.save(commentPhoto);
+
+        CommentChangeRequest commentChangeRequest = new CommentChangeRequest(
+                savedComment.getId(),
+                "수정된 내용",
+                savedPhoto.getCommentPhotoId());
+
+        Path directoryPath = Paths.get("comment-photo");
+        File imageFile = new File(directoryPath + "\\changeTest.jpg");
+        MockMultipartFile updateFile = new MockMultipartFile("images", "changeTest.jpg", null, Files.readAllBytes(imageFile.toPath()));
+
+        mockMvc.perform(multipart("/posts/comments")
+                        .file(updateFile)
+                        .accept(MediaTypes.HAL_JSON_VALUE)
+                        .contentType(MediaTypes.HAL_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(commentChangeRequest))
+                )
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("_links.self").exists())
                 .andDo(print());
     }
