@@ -90,9 +90,8 @@ class CommentControllerTest {
 
         CommentSaveRequest commentSaveRequest = new CommentSaveRequest(saveUser.getId(), "댓글 생성해주세요.");
 
-        Path directoryPath = Paths.get("comment-photo");
-        File imageFile = new File(directoryPath + "\\test.jpg");
-        File imageFile2 = new File(directoryPath + "\\test2.jpg");
+        File imageFile = new File(System.getProperty("user.dir") + "\\comment-photo" + "\\test.jpg");
+        File imageFile2 = new File(System.getProperty("user.dir") + "\\comment-photo" + "\\test2.jpg");
         MockMultipartFile firstFile = new MockMultipartFile("images", "test.jpg", null, Files.readAllBytes(imageFile.toPath()));
         MockMultipartFile secondFile = new MockMultipartFile("images", "test2.jpg", null, Files.readAllBytes(imageFile2.toPath()));
 
@@ -207,8 +206,7 @@ class CommentControllerTest {
                 "수정된 내용",
                 savedPhoto.getCommentPhotoId());
 
-        Path directoryPath = Paths.get("comment-photo");
-        File imageFile = new File(directoryPath + "\\changeTest.jpg");
+        File imageFile = new File(System.getProperty("user.dir") + "\\comment-photo" + "\\changeTest.jpg");
         MockMultipartFile updateFile = new MockMultipartFile("images", "changeTest.jpg", null, Files.readAllBytes(imageFile.toPath()));
 
         mockMvc.perform(multipart("/posts/comments")
