@@ -88,12 +88,19 @@ asciidoctor {
 }
 
 processResources.dependsOn('copyConfigSettings')
+processResources.dependsOn('copyTestConfigSettings')
 
 task copyConfigSettings(type: Copy) {
     from 'src/main/config'
     into 'src/main/resources/'
 }
 
+task copyTestConfigSettings(type: Copy) {
+    from 'src/main/config/application-test.yml'
+    into 'src/test/resources/'
+}
+
 build {
     dependsOn copyConfigSettings
+    dependsOn copyTestConfigSettings
 }

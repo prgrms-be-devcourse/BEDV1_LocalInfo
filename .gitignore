@@ -46,4 +46,5 @@ out/
 ### local-db
 db/
 docker-compose.yml
-src/main/resources/ 제거할 예정
+src/main/resources/
+src/test/resources/application-test.yml
