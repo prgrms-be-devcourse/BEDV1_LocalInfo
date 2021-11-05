@@ -47,4 +47,3 @@ out/
 db/
 docker-compose.yml
 src/main/resources/
-src/test/resources/application-test.yml

@@ -4,15 +4,15 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.kdt.localinfo.user.entity.Region;
 import com.kdt.localinfo.user.entity.Role;
 import com.kdt.localinfo.user.entity.User;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.Set;
 
-@Builder
 @ToString
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 public class UserResponse {
     private Long id;

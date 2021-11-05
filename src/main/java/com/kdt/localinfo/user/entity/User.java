@@ -51,4 +51,23 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private final List<Comment> comments = new ArrayList<>();
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setRegion(Region region) {
+        this.region = region;
+    }
 }

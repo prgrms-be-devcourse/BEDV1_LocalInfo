@@ -1,11 +1,9 @@
 package com.kdt.localinfo.user.controller;
 
-import com.kdt.localinfo.common.ErrorResources;
-import com.kdt.localinfo.common.ValidationException;
+import com.kdt.localinfo.error.InvalidInputException;
 import com.kdt.localinfo.user.dto.UserRequest;
 import com.kdt.localinfo.user.dto.UserResponse;
 import com.kdt.localinfo.user.service.UserService;
-import javassist.NotFoundException;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.MediaTypes;
@@ -23,7 +21,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping(value = "/api/users", produces = MediaTypes.HAL_JSON_VALUE)
+@RequestMapping(value = "/users", produces = MediaTypes.HAL_JSON_VALUE)
 public class UserController {
 
     private final UserService userService;
@@ -32,20 +30,10 @@ public class UserController {
         this.userService = userService;
     }
 
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<Object> notFoundHandler(NotFoundException e) {
-        return ResponseEntity.notFound().build();
-    }
-
-    @ExceptionHandler({ValidationException.class})
-    public ResponseEntity<EntityModel<Errors>> badRequest(ValidationException ex) {
-        return ResponseEntity.badRequest().body(ErrorResources.modelOf(ex.getErrors()));
-    }
-
     @PostMapping(produces = MediaTypes.HAL_JSON_VALUE, consumes = MediaTypes.HAL_JSON_VALUE)
     public ResponseEntity<EntityModel<UserResponse>> createUser(@RequestBody @Validated UserRequest request, Errors errors) {
         if (errors.hasErrors()) {
-            throw new ValidationException("UserRequest has invalid input error", errors);
+            throw new InvalidInputException("UserRequest Validation Error", errors);
         }
         UserResponse userResponse = userService.addUser(request);
         URI createdUri = linkTo(UserController.class).slash(userResponse).toUri();
@@ -58,7 +46,7 @@ public class UserController {
     }
 
     @GetMapping(produces = MediaTypes.HAL_JSON_VALUE)
-    public ResponseEntity<CollectionModel<EntityModel<UserResponse>>> listUsers() throws Exception {
+    public ResponseEntity<CollectionModel<EntityModel<UserResponse>>> listUsers() {
         List<UserResponse> userList = userService.getUserList();
         List<EntityModel<UserResponse>> collect = userList.stream()
                 .map(userResponse -> EntityModel.of(userResponse,
@@ -69,7 +57,7 @@ public class UserController {
     }
 
     @GetMapping(produces = MediaTypes.HAL_JSON_VALUE, value = "/{id}")
-    public ResponseEntity<EntityModel<UserResponse>> getUser(@PathVariable Long id) throws Exception {
+    public ResponseEntity<EntityModel<UserResponse>> getUser(@PathVariable Long id) {
         UserResponse userResponse = userService.getUser(id);
         if (userResponse == null) {
             return ResponseEntity.notFound().build();
@@ -85,13 +73,27 @@ public class UserController {
         return ResponseEntity.ok(entityModel);
     }
 
+    @PutMapping(produces = MediaTypes.HAL_JSON_VALUE, value = "/{id}")
+    public ResponseEntity<EntityModel<UserResponse>> updateUser(@PathVariable Long id, @RequestBody @Validated UserRequest request, Errors errors) {
+        if (errors.hasErrors()) {
+            throw new InvalidInputException("UserRequest Validation Error", errors);
+        }
+        UserResponse userResponse = userService.updateUser(id, request);
+        if (userResponse == null) {
+            return ResponseEntity.notFound().build();
+        }
+        EntityModel<UserResponse> entityModel = EntityModel.of(userResponse,
+                getLinkAddress().slash(userResponse.getId()).withSelfRel(),
+                getLinkAddress().slash(userResponse.getId()).withRel("get"),
+                getLinkAddress().slash(userResponse.getId()).withRel("delete")
+        );
+        WebMvcLinkBuilder linkTo = linkTo(methodOn(this.getClass()).listUsers());
+        entityModel.add(linkTo.withRel("user-list"));
+        return ResponseEntity.ok(entityModel);
+    }
 
     private WebMvcLinkBuilder getLinkAddress() {
         return linkTo(UserController.class);
-    }
-
-    private ResponseEntity badRequest(Errors errors) {
-        return ResponseEntity.badRequest().body(ErrorResources.modelOf(errors));
     }
 
 }
