@@ -88,7 +88,7 @@ asciidoctor {
 }
 
 processResources.dependsOn('copyConfigSettings')
-processResources.dependsOn('copyTestConfigSettings')
+processTestResources.dependsOn('copyTestConfigSettings')
 
 task copyConfigSettings(type: Copy) {
     from 'src/main/config'
