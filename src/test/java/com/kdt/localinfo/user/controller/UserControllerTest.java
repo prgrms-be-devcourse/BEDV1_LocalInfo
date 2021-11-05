@@ -106,25 +106,25 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("유저 단건 조회 - 성공")
+    @DisplayName("유저 단건 조회")
     public void getUser() throws Exception {
-        UserRequest userRequest = UserRequest.builder()
-                .name("심수현")
-                .nickname("poogle")
-                .email("suhyun@mail.com")
-                .password("1234")
-                .role("GENERAL")
+        Region region = Region.builder()
                 .neighborhood("동천동")
                 .district("수지구")
                 .city("용인시")
                 .build();
-        mockMvc.perform(post(BASE_URL)
-                .accept(MediaTypes.HAL_JSON_VALUE)
-                .contentType(MediaTypes.HAL_JSON_VALUE)
-                .content(objectMapper.writeValueAsString(userRequest)))
-                .andReturn();
-        mockMvc.perform(get(BASE_URL + "/{id}", 1L)
-                .accept(MediaTypes.HAL_JSON_VALUE))
+        User user = User.builder()
+                .name("심수현")
+                .nickname("poogle")
+                .email("suhyun@mail.com")
+                .password("1234")
+                .roles(Set.of(Role.valueOf("GENERAL")))
+                .region(region)
+                .build();
+        User savedUser = userRepository.save(user);
+
+        mockMvc.perform(get(BASE_URL + "/{id}", savedUser.getId())
+                        .accept(MediaTypes.HAL_JSON_VALUE))
                 .andDo(print())
                 .andExpect(status().isOk());
     }

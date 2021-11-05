@@ -1,11 +1,8 @@
 package com.kdt.localinfo.post.controller;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kdt.localinfo.category.Category;
 import com.kdt.localinfo.category.CategoryRepository;
-import com.kdt.localinfo.photo.Photo;
 import com.kdt.localinfo.post.dto.PostCreateRequest;
 import com.kdt.localinfo.post.dto.PostResponse;
 import com.kdt.localinfo.post.dto.PostUpdateRequest;
@@ -16,6 +13,7 @@ import com.kdt.localinfo.user.entity.Region;
 import com.kdt.localinfo.user.entity.User;
 import com.kdt.localinfo.user.repository.UserRepository;
 import javassist.NotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,17 +25,23 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Slf4j
 @Transactional
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -68,6 +72,9 @@ class PostControllerTest {
     private Category savedCategory1;
 
     private Category savedCategory2;
+
+    @Autowired
+    private PostRepository postRepository;
 
     @BeforeEach
     void saveSampleData() throws IOException, NotFoundException {
@@ -108,17 +115,26 @@ class PostControllerTest {
         savedPostId = postService.savePost(postCreateRequest, photos).getId();
     }
 
-//    @Test
-//    @DisplayName("게시물 작성 테스트")
-//    void write() throws Exception {
-//        mockMvc.perform(post("/posts")
-//                        .accept(MediaTypes.HAL_JSON_VALUE)
-//                        .contentType(MediaTypes.HAL_JSON_VALUE)
-//                        .content(objectMapper.writeValueAsString(postCreateRequest))
-//                )
-//                .andExpect(status().isCreated())
-//                .andDo(print());
-//    }
+    @Test
+    @DisplayName("게시물 작성 테스트")
+    void write() throws Exception {
+
+        MvcResult mvcResult = mockMvc.perform(multipart("/posts")
+                        .accept(MediaTypes.HAL_JSON_VALUE)
+                        .contentType(MediaTypes.HAL_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(postCreateRequest))
+                )
+                .andExpect(status().isCreated())
+                .andDo(print())
+                .andReturn();
+
+        PostResponse postResponse = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PostResponse.class);
+        Optional<Post> optionalPost = postRepository.findById(postResponse.getId());
+        assertAll(
+                () -> assertEquals(postResponse.getContents(), postCreateRequest.getContents()),
+                () -> assertNotEquals(optionalPost, Optional.empty()));
+
+    }
 
     @Test
     @DisplayName("게시물 상세 조회 테스트")

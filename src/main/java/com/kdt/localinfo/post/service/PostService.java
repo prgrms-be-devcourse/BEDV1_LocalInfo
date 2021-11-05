@@ -6,6 +6,7 @@ import com.kdt.localinfo.category.CategoryRepository;
 import com.kdt.localinfo.comment.entity.Comment;
 import com.kdt.localinfo.comment.repository.CommentRepository;
 import com.kdt.localinfo.photo.Photo;
+import com.kdt.localinfo.photo.PhotoRepository;
 import com.kdt.localinfo.post.dto.PostCreateRequest;
 import com.kdt.localinfo.post.dto.PostResponse;
 import com.kdt.localinfo.post.dto.PostUpdateRequest;
@@ -35,7 +36,8 @@ public class PostService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final CommentRepository commentRepository;
-    private final S3Service s3Service;
+    private final AwsS3Service awsS3Service;
+    private final PhotoRepository photoRepository;
 
     public PostService(PostRepository postRepository, AwsS3Service awsS3Service, UserRepository userRepository,
                        CategoryRepository categoryRepository, CommentRepository commentRepository, PhotoRepository photoRepository) {
@@ -43,7 +45,8 @@ public class PostService {
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
         this.commentRepository = commentRepository;
-        this.s3Service = s3Service;
+        this.awsS3Service = awsS3Service;
+        this.photoRepository = photoRepository;
     }
 
     @Transactional
@@ -128,5 +131,19 @@ public class PostService {
                 })
                 .orElseThrow(() -> new IllegalArgumentException(NOT_DELETE_MESSAGE));
         return postId;
+    }
+
+    private List<Photo> fileUpload(List<MultipartFile> multipartFiles) throws IOException {
+        List<Photo> uploadPhotos = new ArrayList<>();
+
+        if (multipartFiles != null) {
+            for (MultipartFile multipartFile : multipartFiles) {
+                Photo upload = Photo.builder()
+                        .url(awsS3Service.upload(multipartFile, "post-photo"))
+                        .build();
+                uploadPhotos.add(upload);
+            }
+        }
+        return uploadPhotos;
     }
 }

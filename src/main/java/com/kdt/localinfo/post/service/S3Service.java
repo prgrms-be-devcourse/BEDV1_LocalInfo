@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
 
-@Service
 public class S3Service {
     private static final String EXTENSION_DELIMITER = ".";
 

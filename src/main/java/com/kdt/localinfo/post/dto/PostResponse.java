@@ -1,19 +1,15 @@
 package com.kdt.localinfo.post.dto;
 
-import com.kdt.localinfo.category.Category;
 import com.kdt.localinfo.comment.entity.Comment;
 import com.kdt.localinfo.photo.Photo;
 import com.kdt.localinfo.post.entity.Post;
-import com.kdt.localinfo.user.entity.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@ToString
 @Getter
 @Builder
 @AllArgsConstructor
