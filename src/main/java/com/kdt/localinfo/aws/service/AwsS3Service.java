@@ -34,8 +34,9 @@ public class AwsS3Service {
 
     // S3로 파일 업로드하기
     private String upload(File uploadFile, String directoryName) {
-        String fileName = directoryName + "/" + UUID.randomUUID() + "-" + uploadFile.getName();   // S3에 저장된 파일 이름
-        String uploadImageUrl = putS3(uploadFile, fileName); // s3로 업로드
+        // S3에 저장된 파일 이름
+        StringBuilder fileName = new StringBuilder(directoryName).append("/").append(UUID.randomUUID()).append("-").append(uploadFile.getName());
+        String uploadImageUrl = putS3(uploadFile, fileName.toString()); // s3로 업로드
         removeNewFile(uploadFile);
         return uploadImageUrl;
     }
