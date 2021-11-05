@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -65,4 +66,11 @@ public class UserService {
                 .build());
         return new UserResponse(userRepository.save(beforeUser));
     }
+
+    @Transactional
+    public void deleteUser(Long id) throws EntityNotFoundException {
+        User foundUser = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("해당 유저가 존재하지 않습니다."));
+        foundUser.deleteUser();
+    }
+
 }

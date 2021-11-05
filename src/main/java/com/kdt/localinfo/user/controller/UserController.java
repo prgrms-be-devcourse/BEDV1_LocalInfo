@@ -13,6 +13,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -96,4 +97,9 @@ public class UserController {
         return linkTo(UserController.class);
     }
 
+    @DeleteMapping(value = "{id}", produces = MediaTypes.HAL_JSON_VALUE)
+    public ResponseEntity<EntityModel<?>> deleteUser(@PathVariable Long id) throws EntityNotFoundException {
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
+    }
 }
