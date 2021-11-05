@@ -27,11 +27,11 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -146,7 +146,7 @@ class CommentControllerTest {
                 .build();
         comment2.setPost(savePost);
         comment2.setUser(saveUser);
-        comment.setDeleted();
+        comment.deletedComment();
         commentRepository.save(comment);
         commentRepository.save(comment2);
 
@@ -218,5 +218,55 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("_links.self").exists())
                 .andDo(print());
+    }
+
+    @Test
+    @DisplayName("댓글 삭제")
+    void deleteCommentTest() throws Exception {
+        Region region = Region.builder()
+                .city("고양시")
+                .district("덕양구")
+                .neighborhood("행신동")
+                .build();
+        User user = User.builder()
+                .email("email1")
+                .region(region)
+                .nickname("nickname")
+                .password("password")
+                .name("name")
+                .build();
+        User saveUser = userRepository.save(user);
+
+        Category category = new Category(1L, "동네생활");
+        Category saveCategory = categoryRepository.save(category);
+
+        Post post1 = Post.builder()
+                .contents("this is sample post")
+                .region(region)
+                .category(saveCategory).build();
+        post1.setUser(saveUser);
+        Post savePost = postRepository.save(post1);
+
+        Comment comment = Comment.builder()
+                .contents("댓글")
+                .build();
+        comment.setPost(savePost);
+        comment.setUser(saveUser);
+        Comment savedComment = commentRepository.save(comment);
+
+        String photoUrl = "https://localinfo-photo.s3.ap-northeast-2.amazonaws.com/comment-photo/01806ddd-0ff8-4152-a156-e2c2d9b4050c-test.jpg";
+        CommentPhoto commentPhoto = new CommentPhoto(photoUrl, comment);
+        CommentPhoto savedPhoto = commentPhotoRepository.save(commentPhoto);
+
+        mockMvc.perform(delete("/posts/comments/{comment-id}", savePost.getId())
+                        .accept(MediaTypes.HAL_JSON_VALUE)
+                        .contentType(MediaTypes.HAL_JSON_VALUE))
+                .andExpect(status().isNoContent())
+                .andDo(print());
+
+        Comment deletedComment = commentRepository.findById(savedComment.getId()).orElseThrow();
+        CommentPhoto deletedPhoto = commentPhotoRepository.findById(savedPhoto.getCommentPhotoId()).orElseThrow();
+        assertThat(deletedComment.getDeletedAt(), is(notNullValue()));
+        assertThat(deletedPhoto.getDeletedAt(), is(notNullValue()));
     }
 }

@@ -29,8 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +36,7 @@ import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
@@ -161,7 +160,7 @@ class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("게시글 아이디로 댓글 조회 Service")
+    @DisplayName("댓글 수정 Service")
     void changedCommentTest() throws IOException {
         // GIVEN
         Comment comment = TestEntityFactory.commentBuilder().build();
@@ -200,6 +199,32 @@ class CommentServiceTest {
         assertThat(commentResponse.getRegion(), is(expectCommentResponse.getRegion()));
         assertThat(commentResponse.getNickName(), is(expectCommentResponse.getNickName()));
         assertThat(commentResponse.getUrls(), is(expectCommentResponse.getUrls()));
+    }
+
+    @Test
+    @DisplayName("댓글 삭제")
+    void deleteComment() throws IOException {
+        // GIVEN
+        String url = "2544a8cf-b522-48f4-915a-6425018c5957-test2.jpg";
+
+        Comment comment = TestEntityFactory.commentBuilder().build();
+
+        CommentPhoto commentPhoto = new CommentPhoto(url, comment);
+        List<CommentPhoto> commentPhotos = new ArrayList<>();
+        commentPhotos.add(commentPhoto);
+
+        given(commentRepository.findById(comment.getId())).willReturn(Optional.of(comment));
+
+        // WHEN
+        commentService.deleteComment(comment.getId());
+
+        // THEN
+        assertThat(comment.getDeletedAt(), is(notNullValue()));
+        commentPhotos.forEach(commentPhoto1 -> {
+            assertThat(commentPhoto1.getDeletedAt(), is(notNullValue()));
+        });
+
+
     }
 
     private Long checkedDepth(Long parentId) {
