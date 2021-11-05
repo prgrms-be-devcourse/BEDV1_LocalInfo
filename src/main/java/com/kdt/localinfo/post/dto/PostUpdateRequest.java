@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PostUpdateRequest {
     private String contents;
-    private String categoryId;
+    private Long categoryId;
 }

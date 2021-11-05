@@ -138,21 +138,31 @@ class PostControllerTest {
                 .andDo(print());
     }
 
-//    @Test
-//    @DisplayName("게시물 수정 테스트")
-//    void updatePost() throws Exception {
-//        PostUpdateRequest postUpdateRequest = PostUpdateRequest.builder()
-//                .contents("this is updated post")
-//                .categoryId(String.valueOf(savedCategory2.getId()))
-//                .build();
-//
-//        mockMvc.perform(put("/posts/{post-id}", savedPostId)
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(objectMapper.writeValueAsString(postUpdateRequest)))
-//                .andExpect(status().isOk())
-//                .andDo(print());
-//    }
+    @Test
+    @DisplayName("게시물 수정 테스트")
+    void updatePost() throws Exception {
 
+        PostUpdateRequest postUpdateRequest = PostUpdateRequest.builder()
+                .contents("this is update content")
+                .categoryId(savedCategory1.getId())
+                .build();
+
+        MvcResult mvcResult = mockMvc.perform(multipart("/posts/{postId}", savedPostId)
+                        .accept(MediaTypes.HAL_JSON_VALUE)
+                        .contentType(MediaTypes.HAL_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(postUpdateRequest))
+                )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
+
+        PostResponse postResponse = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PostResponse.class);
+        Optional<Post> optionalPost = postRepository.findById(postResponse.getId());
+        assertAll(
+                () -> assertNotEquals(postResponse.getContents(), postCreateRequest.getContents()),
+                () -> assertNotEquals(optionalPost, Optional.empty()));
+
+    }
 
     @Test
     @DisplayName("게시물 삭제 테스트")

@@ -99,9 +99,12 @@ public class PostService {
     }
 
     @Transactional
-    public Long updatePost(Long postId, PostUpdateRequest request) throws NotFoundException, IOException {
-        Category category = categoryRepository.findById(Long.valueOf(request.getCategoryId()))
+    public PostResponse updatePost(Long postId, PostUpdateRequest request, List<MultipartFile> multipartFiles) throws NotFoundException, IOException {
+        Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new NotFoundException(NOT_FOUND_MESSAGE_CATEGORY));
+
+        List<Photo> postPhotos = fileUpload(multipartFiles);
+        List<Photo> savedPhotos = photoRepository.saveAll(postPhotos);
 
         Post foundPost = postRepository.findById(postId)
                 .filter(unidentifiedPost -> unidentifiedPost.getDeletedAt() == null)
@@ -109,9 +112,9 @@ public class PostService {
 
         foundPost.setContents(request.getContents());
         foundPost.setCategory(category);
+        foundPost.setPhotos(savedPhotos);
 
-        Post saved = postRepository.save(foundPost);
-        return saved.getId();
+        return PostResponse.of(foundPost);
     }
 
     @Transactional

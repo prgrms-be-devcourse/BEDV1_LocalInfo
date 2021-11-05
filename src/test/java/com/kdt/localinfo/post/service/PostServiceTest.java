@@ -5,6 +5,7 @@ import com.kdt.localinfo.category.CategoryRepository;
 import com.kdt.localinfo.post.dto.PostCreateRequest;
 import com.kdt.localinfo.post.dto.PostResponse;
 import com.kdt.localinfo.post.dto.PostUpdateRequest;
+import com.kdt.localinfo.post.entity.Post;
 import com.kdt.localinfo.user.entity.Region;
 import com.kdt.localinfo.user.entity.User;
 import com.kdt.localinfo.user.repository.UserRepository;
@@ -101,15 +102,15 @@ class PostServiceTest {
     @Test
     @DisplayName("게시물 수정 내용 확인용 테스트")
     void updatePost() throws NotFoundException, IOException {
+        List<MultipartFile> multipartFiles = new ArrayList<>();
         PostUpdateRequest postUpdateRequest = PostUpdateRequest.builder()
                 .contents("this is updated post")
-                .categoryId(String.valueOf(savedCategory2.getId()))
+                .categoryId(savedCategory2.getId())
                 .build();
 
-        Long postId = postService.updatePost(savedPostId, postUpdateRequest);
-        PostResponse updatedPost = postService.findDetailPost(postId);
+        PostResponse postResponse = postService.updatePost(savedPostId, postUpdateRequest, multipartFiles);
 
-        assertThat(updatedPost.getContents()).isNotEqualTo(postCreateRequest.getContents());
+        assertThat(postResponse.getContents()).isNotEqualTo(postCreateRequest.getContents());
     }
 
     @Test

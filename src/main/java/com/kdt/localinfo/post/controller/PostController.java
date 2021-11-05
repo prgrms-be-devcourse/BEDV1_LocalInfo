@@ -18,7 +18,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping(produces = MediaTypes.HAL_JSON_VALUE)
+@RequestMapping(produces = MediaTypes.HAL_JSON_VALUE, value = "/posts")
 public class PostController {
 
     private final PostService postService;
@@ -27,12 +27,12 @@ public class PostController {
         this.postService = postService;
     }
 
-    @PostMapping(value = "/posts", produces = MediaTypes.HAL_JSON_VALUE, consumes = MediaTypes.HAL_JSON_VALUE)
+    @PostMapping(produces = MediaTypes.HAL_JSON_VALUE, consumes = MediaTypes.HAL_JSON_VALUE)
     public ResponseEntity<EntityModel<PostResponse>> write(
             @RequestParam(value = "images", required = false) List<MultipartFile> multipartFiles,
             @RequestBody @Validated PostCreateRequest request,
             Errors errors) throws IOException, NotFoundException {
-        if  (errors.hasErrors()) {
+        if (errors.hasErrors()) {
             throw new ValidationException("PostCreateRequest Invalid Input", errors);
         }
         PostResponse postResponse = postService.savePost(request, multipartFiles);
@@ -44,26 +44,40 @@ public class PostController {
         return ResponseEntity.created(createdUri).body(entityModel);
     }
 
-    @GetMapping("posts/{post-id}")
+    @GetMapping(value = "/{post-id}")
     public ResponseEntity<PostResponse> findDetailPost(@PathVariable(name = "post-id") Long postId) throws NotFoundException {
         return ResponseEntity.ok(postService.findDetailPost(postId));
     }
 
-    @GetMapping("posts/categories/{category-id}")
+    @GetMapping(value = "/categories/{category-id}")
     public ResponseEntity<List<PostResponse>> findPostsByCategory(@PathVariable(name = "category-id") Long categoryId) {
         List<PostResponse> posts = postService.findAllByCategory(categoryId);
         return ResponseEntity.ok(posts);
     }
 
-    @PutMapping(value = "posts/{post-id}")
-    public ResponseEntity<Void> updatePost(
-            @PathVariable(name = "post-id") Long postId,
-            @ModelAttribute PostUpdateRequest request) throws NotFoundException, IOException {
-        postService.updatePost(postId, request);
-        return ResponseEntity.ok().build();
+    @PostMapping(value = "/{postId}", produces = MediaTypes.HAL_JSON_VALUE, consumes = MediaTypes.HAL_JSON_VALUE)
+    public ResponseEntity<EntityModel<PostResponse>> updatePost(
+            @PathVariable Long postId,
+            @RequestParam(value = "images", required = false) List<MultipartFile> multipartFiles,
+            @RequestBody @Validated PostUpdateRequest request,
+            Errors errors) throws NotFoundException, IOException {
+
+        if (errors.hasErrors()) {
+            throw new ValidationException("PostUpdateRequest Invalid Input", errors);
+        }
+
+        PostResponse postResponse = postService.updatePost(postId, request, multipartFiles);
+        URI updatedUri = linkTo(methodOn(PostController.class)
+                .updatePost(postId, multipartFiles, request, errors))
+                .toUri();
+
+        EntityModel<PostResponse> entityModel = EntityModel.of(postResponse,
+                linkTo(methodOn(PostController.class).updatePost(postId, multipartFiles, request, errors)).withSelfRel(),
+                linkTo(methodOn(PostController.class).findPostsByCategory(request.getCategoryId())).withRel("all posts"));
+        return ResponseEntity.ok().body(entityModel);
     }
 
-    @DeleteMapping("/posts/{post-id}")
+    @DeleteMapping(value = "/{post-id}")
     public ResponseEntity<Long> deletePost(@PathVariable(name = "post-id") Long postId) {
         return ResponseEntity.ok(postService.deletePost(postId));
     }
