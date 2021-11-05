@@ -39,6 +39,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-hateoas'
     implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.8'
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.99'
+    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.2'
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.99'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'mysql:mysql-connector-java'
     compileOnly 'org.projectlombok:lombok'
@@ -66,11 +69,14 @@ jacocoTestReport {
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it,
                     excludes: [
-                            '**/com/kdt/localinfo/error/**'
+                            '**/com/kdt/localinfo/error/**',
+                            '**/com/kdt/localinfo/common/**',
+                            '**/com/kdt/localinfo/aws/**'
                     ]
             )
         }))
     }
+
     finalizedBy 'jacocoTestCoverageVerification'
 }
 

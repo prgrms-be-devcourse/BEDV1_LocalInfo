@@ -4,7 +4,7 @@ import com.kdt.localinfo.comment.dto.CommentChangeRequest;
 import com.kdt.localinfo.comment.dto.CommentResponse;
 import com.kdt.localinfo.comment.dto.CommentSaveRequest;
 import com.kdt.localinfo.comment.service.CommentService;
-import com.kdt.localinfo.error.ErrorResources;
+
 import com.kdt.localinfo.error.InvalidInputException;
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -38,16 +38,6 @@ public class CommentController {
     @ExceptionHandler(IOException.class)
     public ResponseEntity<String> ioExceptionHandler(IOException e) {
         return ResponseEntity.badRequest().body(e.getMessage());
-    }
-
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<String> notFoundHandler(NotFoundException e) {
-        return ResponseEntity.badRequest().body(e.getMessage());
-    }
-
-    @ExceptionHandler({InvalidInputException.class})
-    public ResponseEntity<EntityModel<Errors>> badRequest(InvalidInputException ex) {
-        return ResponseEntity.badRequest().body(ErrorResources.modelOf(ex.getErrors()));
     }
 
     @PostMapping(path = "/posts/{post-id}/comments", produces = MediaTypes.HAL_JSON_VALUE, consumes = MediaTypes.HAL_JSON_VALUE)

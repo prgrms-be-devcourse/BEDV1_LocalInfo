@@ -21,12 +21,7 @@ public class TestEntityFactory {
                 .email("test@gmail.com")
                 .build();
 
-        Post post = Post.builder()
-                .id(1L)
-                .contents("게시글")
-                .category(new Category(1L, "동네 맛집"))
-                .region(user.getRegion())
-                .build();
+        Post post = new Post(1L,"게시글", new Category(1L,"동네 맛집"), user.getRegion());
         post.setUser(user);
 
         return Comment.builder()

@@ -77,9 +77,9 @@ class UserControllerTest {
                 .city("용인시")
                 .build();
         MvcResult mvcResult = mockMvc.perform(post(BASE_URL)
-                .accept(MediaTypes.HAL_JSON_VALUE)
-                .contentType(MediaTypes.HAL_JSON_VALUE)
-                .content(objectMapper.writeValueAsString(userRequest)))
+                        .accept(MediaTypes.HAL_JSON_VALUE)
+                        .contentType(MediaTypes.HAL_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(userRequest)))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("id").exists())
@@ -102,7 +102,7 @@ class UserControllerTest {
     @DisplayName("유저 리스트 조회")
     public void getUsers() throws Exception {
         mockMvc.perform(get(BASE_URL)
-                .accept(MediaTypes.HAL_JSON_VALUE))
+                        .accept(MediaTypes.HAL_JSON_VALUE))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -126,7 +126,7 @@ class UserControllerTest {
         User savedUser = userRepository.save(user);
 
         mockMvc.perform(get(BASE_URL + "/{id}", savedUser.getId())
-                .accept(MediaTypes.HAL_JSON_VALUE))
+                        .accept(MediaTypes.HAL_JSON_VALUE))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -185,7 +185,7 @@ class UserControllerTest {
         User savedUser = userRepository.save(user);
         log.info("[*] savedUser:{}", savedUser);
         mockMvc.perform(delete(BASE_URL + "/{id}", savedUser.getId())
-                .accept(MediaTypes.HAL_JSON_VALUE))
+                        .accept(MediaTypes.HAL_JSON_VALUE))
                 .andDo(print())
                 .andExpect(status().isNoContent());
         User deletedUser = userRepository.findById(savedUser.getId()).orElseThrow();

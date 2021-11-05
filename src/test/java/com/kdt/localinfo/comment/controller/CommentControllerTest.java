@@ -25,6 +25,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.transaction.Transactional;
 import java.io.File;
 import java.nio.file.Files;
 
@@ -40,6 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @SpringBootTest
+@Transactional
 class CommentControllerTest {
 
     @Autowired
@@ -81,10 +83,8 @@ class CommentControllerTest {
         User saveUser = userRepository.save(user);
         Category category = new Category(1L, "동네생활");
         Category saveCategory = categoryRepository.save(category);
-        Post post1 = Post.builder()
-                .contents("this is sample post")
-                .region(region)
-                .category(saveCategory).build();
+        Post post1 = new Post("this is sample post", region, saveCategory);
+
         post1.setUser(saveUser);
         Post savePost = postRepository.save(post1);
 
@@ -128,10 +128,7 @@ class CommentControllerTest {
         Category category = new Category(1L, "동네생활");
         Category saveCategory = categoryRepository.save(category);
 
-        Post post1 = Post.builder()
-                .contents("this is sample post")
-                .region(region)
-                .category(saveCategory).build();
+        Post post1 = new Post("this is sample post", region, saveCategory);
         post1.setUser(saveUser);
         Post savePost = postRepository.save(post1);
 
@@ -183,10 +180,7 @@ class CommentControllerTest {
         Category category = new Category(1L, "동네생활");
         Category saveCategory = categoryRepository.save(category);
 
-        Post post1 = Post.builder()
-                .contents("this is sample post")
-                .region(region)
-                .category(saveCategory).build();
+        Post post1 = new Post("this is sample post", region, saveCategory);
         post1.setUser(saveUser);
         Post savePost = postRepository.save(post1);
 
@@ -240,10 +234,7 @@ class CommentControllerTest {
         Category category = new Category(1L, "동네생활");
         Category saveCategory = categoryRepository.save(category);
 
-        Post post1 = Post.builder()
-                .contents("this is sample post")
-                .region(region)
-                .category(saveCategory).build();
+        Post post1 = new Post("this is sample post", region, saveCategory);
         post1.setUser(saveUser);
         Post savePost = postRepository.save(post1);
 
@@ -258,7 +249,7 @@ class CommentControllerTest {
         CommentPhoto commentPhoto = new CommentPhoto(photoUrl, comment);
         CommentPhoto savedPhoto = commentPhotoRepository.save(commentPhoto);
 
-        mockMvc.perform(delete("/posts/comments/{comment-id}", savePost.getId())
+        mockMvc.perform(delete("/posts/comments/{comment-id}", savedComment.getId())
                         .accept(MediaTypes.HAL_JSON_VALUE)
                         .contentType(MediaTypes.HAL_JSON_VALUE))
                 .andExpect(status().isNoContent())
