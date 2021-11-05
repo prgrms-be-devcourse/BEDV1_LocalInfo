@@ -26,10 +26,12 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import java.util.Objects;
 import java.util.Set;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -39,7 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class UserControllerTest {
 
-    private final String BASE_URL = "/api/users";
+    private final String BASE_URL = "/users";
 
     @Autowired
     MockMvc mockMvc;
@@ -62,7 +64,7 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("정상적으로 사용자 생성하는 테스트")
+    @DisplayName("유저 생성 테스트")
     public void createUser() throws Exception {
         UserRequest userRequest = UserRequest.builder()
                 .name("심수현")
@@ -130,11 +132,63 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("유저 단건 조회 - 실패")
-    public void getUserNotFound() throws Exception {
-        mockMvc.perform(get(BASE_URL + "/{id}", -1L)
+    @DisplayName("유저 수정")
+    public void editUser() throws Exception {
+        Region region = Region.builder()
+                .neighborhood("대치동")
+                .district("강남구")
+                .city("서울시")
+                .build();
+        User user = User.builder()
+                .name("심수현")
+                .nickname("poogle")
+                .email("suhyun@mail.com")
+                .password("1234")
+                .roles(Set.of(Role.valueOf("GENERAL")))
+                .region(region)
+                .build();
+        User savedUser = userRepository.save(user);
+
+        UserRequest userRequest = UserRequest.builder()
+                .name("김수현")
+                .nickname("pogle")
+                .email("su@mail.com")
+                .password("1111")
+                .role("ADMIN")
+                .neighborhood("대치동")
+                .district("강남구")
+                .city("서울시")
+                .build();
+
+        mockMvc.perform(put(BASE_URL + "/{id}", savedUser.getId())
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .contentType(MediaTypes.HAL_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(userRequest)));
+    }
+
+    @Test
+    @DisplayName("유저 삭제")
+    public void deleteUser() throws Exception {
+        Region region = Region.builder()
+                .neighborhood("동천동")
+                .district("수지구")
+                .city("용인시")
+                .build();
+        User user = User.builder()
+                .name("심수현")
+                .nickname("poogle")
+                .email("suhyun@mail.com")
+                .password("1234")
+                .roles(Set.of(Role.valueOf("GENERAL")))
+                .region(region)
+                .build();
+        User savedUser = userRepository.save(user);
+        log.info("[*] savedUser:{}", savedUser);
+        mockMvc.perform(delete(BASE_URL + "/{id}", savedUser.getId())
                         .accept(MediaTypes.HAL_JSON_VALUE))
                 .andDo(print())
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNoContent());
+        User deletedUser = userRepository.findById(savedUser.getId()).orElseThrow();
+        assertThat(deletedUser.getDeletedAt(), is(notNullValue()));
     }
 }

@@ -2,29 +2,39 @@ package com.kdt.localinfo.user.service;
 
 import com.kdt.localinfo.user.dto.UserRequest;
 import com.kdt.localinfo.user.dto.UserResponse;
+import com.kdt.localinfo.user.entity.Region;
+import com.kdt.localinfo.user.entity.Role;
 import com.kdt.localinfo.user.entity.User;
 import com.kdt.localinfo.user.repository.UserRepository;
-import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.modelmapper.ModelMapper;
+import org.springframework.hateoas.MediaTypes;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static com.kdt.localinfo.user.entity.UserTest.getUserFixture;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @Slf4j
@@ -32,13 +42,16 @@ import static org.mockito.BDDMockito.given;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserServiceTest {
 
+    @InjectMocks
     private UserService userService;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private ModelMapper modelMapper;
 
     @BeforeEach
     void setUp() {
-        userService = new UserService(userRepository);
+        userService = new UserService(userRepository, modelMapper);
     }
 
     @Test
@@ -64,7 +77,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("유저 단건 조회 테스트 - 성공")
-    void readUser() throws Exception {
+    void readUser() {
         User user = getUserFixture();
         given(userRepository.findById(anyLong())).willReturn(Optional.of(user));
 
@@ -83,15 +96,16 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("유저 단건 조회 테스트 - 실패")
+    @DisplayName("유저 단건 조회 테스트 - 실패: 없는 유저를 조회하는 경우")
     void readUserNotFound() {
-        given(userRepository.findById(anyLong())).willReturn(Optional.empty());
-        thenThrownBy(() -> userService.getUser(1L)).isExactlyInstanceOf(NotFoundException.class);
+        assertThatThrownBy(() -> userService.getUser(-1L))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessage("해당 유저가 존재하지 않습니다.");
     }
 
     @Test
     @DisplayName("유저 전체 조회 테스트")
-    void readAllUsers() throws Exception {
+    void readAllUsers() {
         List<User> users = Arrays.asList(
                 getUserFixture(1L),
                 getUserFixture(2L)
@@ -103,5 +117,21 @@ class UserServiceTest {
                 .hasSize(2)
                 .extracting("id")
                 .contains(1L, 2L);
+    }
+
+    @Test
+    @DisplayName("유저 수정 테스트 - 실패: 없는 유저를 수정하려고 하는 경우")
+    void updateNotFoundUser() {
+        given(userRepository.findById(anyLong())).willReturn(Optional.empty());
+        thenThrownBy(() -> userService.updateUser(1L, new UserRequest()))
+                .isExactlyInstanceOf(EntityNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("유저 삭제 테스트 - 실패: 없는 유저를 삭제하려고 하는 경우")
+    void deleteNotFoundUser() {
+        given(userRepository.findById(anyLong())).willReturn(Optional.empty());
+        thenThrownBy(() -> userService.deleteUser(1L))
+                .isExactlyInstanceOf(EntityNotFoundException.class);
     }
 }

@@ -40,15 +40,15 @@ public class Post extends BaseEntity {
     private Region region;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(name = "category_id", nullable = false, foreignKey = @ForeignKey(name = "fk_post_to_category"))
     private Category category;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<Comment> comments = new ArrayList<>();
 
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false, foreignKey = @ForeignKey(name = "fk_post_to_user"))
     private User user;
 
     @OneToMany(mappedBy = "post")
@@ -62,6 +62,20 @@ public class Post extends BaseEntity {
         setUser(user);
         this.photos = photos;
         this.category = category;
+        setCategory(category);
+    }
+
+    @Builder
+    public Post(Long id, String contents, Category category, Region region) {
+        this.id = id;
+        this.contents = contents;
+        this.category = category;
+        this.region = region;
+    }
+
+    public Post(String contents, Region region, Category category) {
+        this.contents = contents;
+        this.region = region;
         setCategory(category);
     }
 

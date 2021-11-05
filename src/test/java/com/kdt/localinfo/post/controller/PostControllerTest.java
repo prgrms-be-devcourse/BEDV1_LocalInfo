@@ -82,7 +82,7 @@ class PostControllerTest {
         Category category2 = new Category(2L, "동네맛집");
         savedCategory1 = categoryRepository.save(category);
         savedCategory2 = categoryRepository.save(category2);
-
+        log.info("test");
         Region region = Region.builder()
                 .city("city1")
                 .district("district1")

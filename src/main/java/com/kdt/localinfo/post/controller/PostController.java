@@ -1,6 +1,6 @@
 package com.kdt.localinfo.post.controller;
 
-import com.kdt.localinfo.error.ValidationException;
+import com.kdt.localinfo.error.InvalidInputException;
 import com.kdt.localinfo.post.dto.PostCreateRequest;
 import com.kdt.localinfo.post.dto.PostResponse;
 import com.kdt.localinfo.post.dto.PostUpdateRequest;
@@ -14,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.ValidationException;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
@@ -37,7 +38,7 @@ public class PostController {
             @RequestBody @Validated PostCreateRequest request,
             Errors errors) throws IOException, NotFoundException {
         if (errors.hasErrors()) {
-            throw new ValidationException("PostCreateRequest Invalid Input", errors);
+            throw new InvalidInputException("PostCreateRequest Invalid Input", errors);
         }
         PostResponse postResponse = postService.savePost(request, multipartFiles);
         URI createdUri = linkTo(methodOn(PostController.class).write(multipartFiles, request, errors)).toUri();
@@ -67,7 +68,7 @@ public class PostController {
             Errors errors) throws NotFoundException, IOException {
 
         if (errors.hasErrors()) {
-            throw new ValidationException("PostUpdateRequest Invalid Input", errors);
+            throw new InvalidInputException("PostUpdateRequest Invalid Input", errors);
         }
 
         PostResponse postResponse = postService.updatePost(postId, request, multipartFiles);

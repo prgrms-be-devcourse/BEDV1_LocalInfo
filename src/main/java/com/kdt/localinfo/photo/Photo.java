@@ -22,7 +22,7 @@ public class Photo {
     private String url;
 
     @ManyToOne
-    @JoinColumn(name = "post_id", referencedColumnName = "post_id")
+    @JoinColumn(name = "post_id", referencedColumnName = "post_id", foreignKey = @ForeignKey(name = "fk_photo_to_post"))
     private Post post;
 
     @Builder

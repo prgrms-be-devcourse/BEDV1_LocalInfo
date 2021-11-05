@@ -4,16 +4,16 @@ import lombok.Getter;
 import org.springframework.validation.Errors;
 
 @Getter
-public class ValidationException extends RuntimeException {
+public class InvalidInputException extends RuntimeException {
 
     private Errors errors;
 
-    public ValidationException(String message, Errors errors) {
+    public InvalidInputException(String message, Errors errors) {
         super(message);
         this.errors = errors;
     }
 
-    public ValidationException(String message) {
+    public InvalidInputException(String message) {
         super(message);
     }
 }
