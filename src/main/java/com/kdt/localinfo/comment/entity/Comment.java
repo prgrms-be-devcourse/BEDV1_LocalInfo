@@ -1,6 +1,7 @@
 package com.kdt.localinfo.comment.entity;
 
 import com.kdt.localinfo.common.BaseEntity;
+import com.kdt.localinfo.photo.CommentPhoto;
 import com.kdt.localinfo.post.entity.Post;
 import com.kdt.localinfo.user.entity.User;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Builder
@@ -33,6 +36,13 @@ public class Comment extends BaseEntity {
     private Post post;
 
     private Long parentId;
+
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.REMOVE)
+    private final List<CommentPhoto> commentPhotos = new ArrayList<>();
+
+    public void changedCommentContents(String contents){
+        this.contents = contents;
+    }
 
     public void setPost(Post post) {
         if (Objects.nonNull(this.post)) {

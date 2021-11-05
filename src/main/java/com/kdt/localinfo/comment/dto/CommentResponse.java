@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -15,4 +16,15 @@ public class CommentResponse {
     private String region;
     private Long parentId;
     private Long depth;
+    private List<String> urls;
+
+    public CommentResponse(Long id, String contents, String nickName, LocalDateTime lastUpdatedAt, String region, Long parentId, Long depth) {
+        this.id = id;
+        this.contents = contents;
+        this.nickName = nickName;
+        this.lastUpdatedAt = lastUpdatedAt;
+        this.region = region;
+        this.parentId = parentId;
+        this.depth = depth;
+    }
 }
