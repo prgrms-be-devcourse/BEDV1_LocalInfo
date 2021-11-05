@@ -2,6 +2,8 @@ package com.kdt.localinfo.post.service;
 
 import com.kdt.localinfo.category.Category;
 import com.kdt.localinfo.category.CategoryRepository;
+import com.kdt.localinfo.comment.entity.Comment;
+import com.kdt.localinfo.comment.repository.CommentRepository;
 import com.kdt.localinfo.photo.Photo;
 import com.kdt.localinfo.post.dto.PostCreateRequest;
 import com.kdt.localinfo.post.dto.PostResponse;
@@ -24,18 +26,23 @@ import java.util.stream.Collectors;
 @Service
 public class PostService {
 
-    private final String NOT_FOUND_MESSAGE = "해당 게시글을 찾을 수 없습니다.";
+    private final String NOT_FOUND_MESSAGE_POST = "해당 게시글을 찾을 수 없습니다.";
+    private final String NOT_FOUND_MESSAGE_CATEGORY = "해당 카테고리를 찾을 수 없습니다.";
     private final String NOT_DELETE_MESSAGE = "해당 게시글을 지울 수 없습니다.";
+    private final String NOT_FOUND_MESSAGE_USER = "해당 유저를 찾을 수 없습니다.";
+
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
+    private final CommentRepository commentRepository;
     private final S3Service s3Service;
 
-    public PostService(PostRepository postRepository, S3Service s3Service,
-                       UserRepository userRepository, CategoryRepository categoryRepository) {
+    public PostService(PostRepository postRepository, S3Service s3Service, UserRepository userRepository,
+                       CategoryRepository categoryRepository, CommentRepository commentRepository) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
+        this.commentRepository = commentRepository;
         this.s3Service = s3Service;
     }
 
@@ -55,10 +62,10 @@ public class PostService {
         }
 
         User user = userRepository.findById(Long.valueOf(request.getUserId()))
-                .orElseThrow(() -> new NotFoundException("해당 유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_MESSAGE_USER));
 
         Category category = categoryRepository.findById(Long.valueOf(request.getCategoryId()))
-                .orElseThrow(() -> new NotFoundException("해당 카테고리 아이디는 존재하지 않습니다."));
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_MESSAGE_CATEGORY));
 
         return Post.builder()
                 .contents(request.getContents())
@@ -79,7 +86,7 @@ public class PostService {
     public PostResponse findDetailPost(Long postId) throws NotFoundException {
         return PostResponse.of(postRepository.findById(postId)
                 .filter(foundPost -> foundPost.getDeletedAt() == null)
-                .orElseThrow(() -> new NotFoundException(NOT_FOUND_MESSAGE)));
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_MESSAGE_POST)));
     }
 
     @Transactional
@@ -93,11 +100,11 @@ public class PostService {
     @Transactional
     public Long updatePost(Long postId, PostUpdateRequest request) throws NotFoundException, IOException {
         Category category = categoryRepository.findById(Long.valueOf(request.getCategoryId()))
-                .orElseThrow(() -> new NotFoundException("해당 카테고리 아이디는 존재하지 않습니다."));
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_MESSAGE_CATEGORY));
 
         Post foundPost = postRepository.findById(postId)
                 .filter(unidentifiedPost -> unidentifiedPost.getDeletedAt() == null)
-                .orElseThrow(() -> new NotFoundException(NOT_FOUND_MESSAGE));
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_MESSAGE_POST));
 
         foundPost.setContents(request.getContents());
         foundPost.setCategory(category);
