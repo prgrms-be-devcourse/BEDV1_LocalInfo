@@ -14,9 +14,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,7 +48,7 @@ class PostServiceTest {
     private PostCreateRequest postCreateRequest;
 
     @BeforeEach
-    void setUp() throws IOException {
+    void setUp() throws IOException, NotFoundException {
         Category category = new Category(1L, "동네생활");
         savedCategory1 = categoryRepository.save(category);
 
@@ -67,13 +69,15 @@ class PostServiceTest {
                 .build();
         savedUser = userRepository.save(user);
 
+        List<MultipartFile> multipartFiles = new ArrayList<>();
+
         postCreateRequest = PostCreateRequest.builder()
                 .contents("this is sample post")
-                .category(savedCategory1)
-                .user(savedUser)
+                .categoryId(String.valueOf(savedCategory1.getId()))
+                .userId(String.valueOf(savedUser.getId()))
                 .build();
 
-        savedPostId = postService.createPost(postCreateRequest);
+        savedPostId = postService.savePost(postCreateRequest);
     }
 
     @Test
@@ -92,5 +96,4 @@ class PostServiceTest {
         assertThat(findPostsByCategory1.size()).isEqualTo(1);
         assertThat(findPostsByCategory2.size()).isEqualTo(0);
     }
-
 }

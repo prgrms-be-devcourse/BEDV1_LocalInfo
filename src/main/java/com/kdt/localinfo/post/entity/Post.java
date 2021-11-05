@@ -10,6 +10,7 @@ import com.kdt.localinfo.user.entity.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -19,12 +20,13 @@ import java.util.Objects;
 
 @Getter
 @Table(name = "posts")
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @Entity
 public class Post extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "post_id")
     private Long id;
 
@@ -49,6 +51,17 @@ public class Post extends BaseEntity {
 
     @OneToMany(mappedBy = "post")
     private List<Photo> photos = new ArrayList<>();
+
+    //Create요청시 사용하는 builder
+    @Builder
+    public Post(String contents, User user, List<Photo> photos, Category category) {
+        this.contents = contents;
+        this.region = user.getRegion();
+        this.user = user;
+        this.photos = photos;
+        this.category = category;
+        setCategory(category);
+    }
 
     @Builder
     public Post(Long id, String contents, Region region, Category category, User user, List<Photo> photos) {

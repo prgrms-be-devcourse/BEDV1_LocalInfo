@@ -4,7 +4,6 @@ import com.kdt.localinfo.post.dto.PostCreateRequest;
 import com.kdt.localinfo.post.dto.PostResponse;
 import com.kdt.localinfo.post.service.PostService;
 import javassist.NotFoundException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,20 +20,20 @@ public class PostController {
         this.postService = postService;
     }
 
-    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/posts", consumes = {"multipart/form-data"})
-    public ResponseEntity<Void> write(@ModelAttribute PostCreateRequest request) throws IOException {
-        Long postId = postService.createPost(request);
-        return ResponseEntity.created(URI.create("/posts/" + postId)).build();
+    public ResponseEntity<Void> write(@ModelAttribute PostCreateRequest request) throws IOException, NotFoundException {
+        Long postId = postService.savePost(request);
+
+        return ResponseEntity.created(URI.create("/api/posts/" + postId)).build();
     }
 
-    @GetMapping("/posts/{postId}")
-    public ResponseEntity<PostResponse> findDetailPost(@PathVariable Long postId) throws NotFoundException {
+    @GetMapping("posts/{post-id}")
+    public ResponseEntity<PostResponse> findDetailPost(@PathVariable(name = "post-id") Long postId) throws NotFoundException {
         return ResponseEntity.ok(postService.findDetailPost(postId));
     }
 
-    @GetMapping("posts/categories/{categoryId}")
-    public ResponseEntity<List<PostResponse>> findPostsByCategory(@PathVariable Long categoryId) {
+    @GetMapping("posts/categories/{category-id}")
+    public ResponseEntity<List<PostResponse>> findPostsByCategory(@PathVariable(name = "category-id") Long categoryId) {
         List<PostResponse> posts = postService.findAllByCategory(categoryId);
         return ResponseEntity.ok(posts);
     }
