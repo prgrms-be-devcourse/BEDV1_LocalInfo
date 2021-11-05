@@ -132,6 +132,16 @@ public class CommentService {
         return commentConverter.converterToCommentResponse(comment, urls);
     }
 
+    @Transactional
+    public void deleteComment(Long commentId){
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NoSuchElementException("댓글 아이디에 해당하는 정보를 찾을 수 없습니다."));
+        comment.deletedComment();
+
+        List<CommentPhoto> commentPhotos = comment.getCommentPhotos();
+        commentPhotos.forEach(CommentPhoto::deleteCommentPhoto);
+    }
+
+
     // 사진 정보에 대해서 전부 db에 저장한 후에 바로 커밋해야 전체 검색을 했을 때 저장된 정보 나옴
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     protected void commentPhotoSave(Comment comment, List<String> fileUrls) {

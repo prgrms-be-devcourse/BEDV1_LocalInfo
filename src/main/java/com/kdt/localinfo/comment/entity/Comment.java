@@ -52,7 +52,7 @@ public class Comment extends BaseEntity {
         post.getComments().add(this);
     }
 
-    public void setDeleted(){
+    public void deletedComment(){
         this.deletedAt = LocalDateTime.now();
     }
 

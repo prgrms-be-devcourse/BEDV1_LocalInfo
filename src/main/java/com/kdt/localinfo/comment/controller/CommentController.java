@@ -98,4 +98,10 @@ public class CommentController {
 
         return ResponseEntity.ok().body(entityModel);
     }
+
+    @DeleteMapping(path = "/posts/comments/{comment-id}", produces = MediaTypes.HAL_JSON_VALUE, consumes = MediaTypes.HAL_JSON_VALUE)
+    public ResponseEntity<EntityModel<Object>> deleteComment(@PathVariable("comment-id") Long commentId){
+        commentService.deleteComment(commentId);
+        return ResponseEntity.noContent().build();
+    }
 }
