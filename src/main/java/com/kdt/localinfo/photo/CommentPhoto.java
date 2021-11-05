@@ -11,6 +11,7 @@ import java.util.Objects;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "comment_photos")
 @Entity
 public class CommentPhoto {
 

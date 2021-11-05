@@ -2,6 +2,7 @@ package com.kdt.localinfo.comment.service;
 
 import com.kdt.localinfo.aws.service.AwsS3Service;
 import com.kdt.localinfo.comment.converter.CommentConverter;
+import com.kdt.localinfo.comment.dto.CommentChangeRequest;
 import com.kdt.localinfo.comment.dto.CommentResponse;
 import com.kdt.localinfo.comment.dto.CommentSaveRequest;
 import com.kdt.localinfo.comment.entity.Comment;
@@ -15,12 +16,15 @@ import com.kdt.localinfo.user.repository.UserRepository;
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -93,6 +97,48 @@ public class CommentService {
                 .collect(Collectors.toList());
 
         return commentResponses;
+    }
+
+    @Transactional
+    public CommentResponse changeComment(List<MultipartFile> multipartFiles, CommentChangeRequest commentChangeRequest) throws IOException {
+        // 요청에 대한 댓글 검색
+        Comment comment = commentRepository.findById(commentChangeRequest.getCommentId()).orElseThrow(() -> new NoSuchElementException("댓글에 대한 정보를 찾을 수 없습니다."));
+
+        // TODO: 사진 삭제 soft delete로 변경
+        // 댓글에 관계된 사진들이랑 요청에 들어온 삭제 요청 사진 uri랑 같으면 해당 데이터 삭제
+        List<CommentPhoto> commentPhotos = comment.getCommentPhotos();
+        commentPhotos.forEach(commentPhoto -> {
+            if (Objects.equals(commentPhoto.getCommentPhotoId(), commentChangeRequest.getCommentId())) {
+                commentPhotoRepository.deleteById(commentPhoto.getCommentPhotoId());
+            }
+        });
+
+        // 댓글 내용 수정
+        comment.changedCommentContents(commentChangeRequest.getContents());
+
+        // 새로 추가한 사진 s3에 업로드 하고 해당 파일들에 대한 url 리턴
+        List<String> fileUrls = fileUpload(multipartFiles);
+
+        // 새로 추가한 사진에 대한 commentPhoto 생성 후 db에 저장
+        commentPhotoSave(comment, fileUrls);
+
+        // comment에 대한 모든 사진 url
+        List<String> urls = new ArrayList<>();
+
+        // commentId로 commentPhoto 검색 후
+        commentPhotoRepository.findAllByCommentId(comment.getId())
+                .forEach(commentPhoto -> urls.add(commentPhoto.getUrl()));
+
+        return commentConverter.converterToCommentResponse(comment, urls);
+    }
+
+    // 사진 정보에 대해서 전부 db에 저장한 후에 바로 커밋해야 전체 검색을 했을 때 저장된 정보 나옴
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    protected void commentPhotoSave(Comment comment, List<String> fileUrls) {
+        List<CommentPhoto> photos = fileUrls.stream()
+                .map(url -> commentConverter.converterToCommentPhoto(comment, url))
+                .collect(Collectors.toList());
+        commentPhotoRepository.saveAll(photos);
     }
 
     private List<String> fileUpload(List<MultipartFile> multipartFiles) throws IOException {

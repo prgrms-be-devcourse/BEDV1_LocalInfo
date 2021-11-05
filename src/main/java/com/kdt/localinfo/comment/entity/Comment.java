@@ -37,8 +37,12 @@ public class Comment extends BaseEntity {
 
     private Long parentId;
 
-    @OneToMany(mappedBy = "comment")
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.REMOVE)
     private final List<CommentPhoto> commentPhotos = new ArrayList<>();
+
+    public void changedCommentContents(String contents){
+        this.contents = contents;
+    }
 
     public void setPost(Post post) {
         if (Objects.nonNull(this.post)) {
