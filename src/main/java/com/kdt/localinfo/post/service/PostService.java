@@ -91,29 +91,16 @@ public class PostService {
     }
 
     @Transactional
-    public Long updatePost(PostUpdateRequest request) throws NotFoundException, IOException {
-        List<MultipartFile> multipartFiles = request.getPhotos();
-        List<Photo> photos = new ArrayList<>();
-
-        if (!Objects.isNull(multipartFiles)) {
-            for (MultipartFile photo : multipartFiles) {
-                Photo photoEntity = Photo.builder()
-                        .url(s3Service.upload(photo))
-                        .build();
-                photos.add(photoEntity);
-            }
-        }
-
+    public Long updatePost(Long postId, PostUpdateRequest request) throws NotFoundException, IOException {
         Category category = categoryRepository.findById(Long.valueOf(request.getCategoryId()))
                 .orElseThrow(() -> new NotFoundException("해당 카테고리 아이디는 존재하지 않습니다."));
 
-        Post foundPost = postRepository.findById(Long.valueOf(request.getPostId()))
+        Post foundPost = postRepository.findById(postId)
                 .filter(unidentifiedPost -> unidentifiedPost.getDeletedAt() == null)
                 .orElseThrow(() -> new NotFoundException(NOT_FOUND_MESSAGE));
 
         foundPost.setContents(request.getContents());
         foundPost.setCategory(category);
-        foundPost.setPhotos(photos);
 
         Post saved = postRepository.save(foundPost);
         return saved.getId();

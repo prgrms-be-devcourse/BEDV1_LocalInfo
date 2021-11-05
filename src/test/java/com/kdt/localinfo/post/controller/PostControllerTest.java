@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kdt.localinfo.category.Category;
 import com.kdt.localinfo.category.CategoryRepository;
 import com.kdt.localinfo.post.dto.PostCreateRequest;
-import com.kdt.localinfo.post.entity.Post;
+import com.kdt.localinfo.post.dto.PostUpdateRequest;
 import com.kdt.localinfo.post.service.PostService;
 import com.kdt.localinfo.user.entity.Region;
 import com.kdt.localinfo.user.entity.User;
@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -47,6 +48,9 @@ class PostControllerTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private PostCreateRequest postCreateRequest;
 
@@ -82,22 +86,21 @@ class PostControllerTest {
         List<MultipartFile> multipartFiles = new ArrayList<>();
         postCreateRequest = PostCreateRequest.builder()
                 .contents("this is sample post")
-                .categoryId(savedCategory1.getId())
-                .userId(savedUser.getId())
+                .categoryId(String.valueOf(savedCategory1.getId()))
+                .userId(String.valueOf(savedUser.getId()))
                 .build();
 
-        Post post = postService.createPost(multipartFiles, postCreateRequest);
-        savedPostId = postService.savePost(post);
+        savedPostId = postService.savePost(postCreateRequest);
     }
 
 //    @Test
 //    @DisplayName("게시물 작성 테스트")
 //    void write() throws Exception {
-//        ArrayList<MultipartFile> multipartFiles = new ArrayList<>();
-//        mockMvc.perform(multipart("/posts")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(objectMapper.writeValueAsString(postCreateRequest))
-//                        .content(multipartFiles))
+//        mockMvc.perform(post("/posts")
+//                        .accept(MediaTypes.HAL_JSON_VALUE)
+//                        .contentType(MediaTypes.HAL_JSON_VALUE)
+//                        .content(objectMapper.writeValueAsString(postCreateRequest))
+//                )
 //                .andExpect(status().isCreated())
 //                .andDo(print());
 //    }
@@ -123,17 +126,17 @@ class PostControllerTest {
 //    @Test
 //    @DisplayName("게시물 수정 테스트")
 //    void updatePost() throws Exception {
-//        File f = new File("/Users/sample.png");
-//        FileInputStream fi1 = new FileInputStream(f);
-//        MockMultipartFile fstmp = new MockMultipartFile("upload", f.getName(), "multipart/form-data", fi1);
-//        mockMvc.perform(MockMvcRequestBuilders.fileUpload("/posts")
-//                        .file(fstmp)
-//                        .param("id", "1L")
-//                        .param("contents", "this is updated contents")
-//                        .param("category", "category1"))
-//                .andExpect(status().isOk());
+//        PostUpdateRequest postUpdateRequest = PostUpdateRequest.builder()
+//                .contents("this is updated post")
+//                .categoryId(String.valueOf(savedCategory2.getId()))
+//                .build();
+//
+//        mockMvc.perform(put("/posts/{post-id}", savedPostId)
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(objectMapper.writeValueAsString(postUpdateRequest)))
+//                .andExpect(status().isOk())
+//                .andDo(print());
 //    }
-
 
 
     @Test

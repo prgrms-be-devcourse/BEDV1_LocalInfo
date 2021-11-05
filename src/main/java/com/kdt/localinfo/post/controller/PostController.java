@@ -39,9 +39,11 @@ public class PostController {
         return ResponseEntity.ok(posts);
     }
 
-    @PutMapping(value = "/posts/{post-id}", consumes = {"multipart/form-data"})
-    public ResponseEntity<Void> updatePost(@ModelAttribute PostUpdateRequest request) throws NotFoundException, IOException {
-        postService.updatePost(request);
+    @PutMapping(value = "posts/{post-id}")
+    public ResponseEntity<Void> updatePost(
+            @PathVariable(name = "post-id") Long postId,
+            @ModelAttribute PostUpdateRequest request) throws NotFoundException, IOException {
+        postService.updatePost(postId, request);
         return ResponseEntity.ok().build();
     }
 

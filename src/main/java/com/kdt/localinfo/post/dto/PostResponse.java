@@ -24,8 +24,8 @@ public class PostResponse {
     private String contents;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private Category category;
-    private User user;
+    private String category;
+    private String user;
     private List<Photo> photos;
     private List<Comment> comments;
 
@@ -35,8 +35,8 @@ public class PostResponse {
                 .contents(post.getContents())
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
-                .category(post.getCategory())
-                .user(post.getUser())
+                .category(post.getCategory().getName())
+                .user(post.getUser().getName())
                 .photos(post.getPhotos())
                 .comments(post.getComments())
                 .build();
