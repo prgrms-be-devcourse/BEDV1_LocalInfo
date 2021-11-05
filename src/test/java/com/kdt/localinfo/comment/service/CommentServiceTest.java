@@ -83,7 +83,7 @@ class CommentServiceTest {
                 checkedDepth(comment.getParentId()),
                 List.of(url));
 
-        File imageFile = new File(System.getProperty("user.dir") + "\\comment-photo" + "\\test.jpg");
+        File imageFile = new File(System.getProperty("user.dir") + "/comment-photo/test.jpg");
         MockMultipartFile firstFile = new MockMultipartFile("images", "test.jpg", null, Files.readAllBytes(imageFile.toPath()));
 
         CommentPhoto commentPhoto = new CommentPhoto(url, comment);
@@ -168,7 +168,7 @@ class CommentServiceTest {
         User user = comment.getUser();
 
         String changedUrl = "2544a8cf-b522-48f4-915a-6425018c5957-changedTest.jpg";
-        File imageFile = new File(System.getProperty("user.dir") + "\\comment-photo" + "\\test.jpg");
+        File imageFile = new File(System.getProperty("user.dir") + "/comment-photo/test.jpg");
         MockMultipartFile changedFile = new MockMultipartFile("images", "changeTest.jpg", null, Files.readAllBytes(imageFile.toPath()));
 
         CommentPhoto commentPhoto = new CommentPhoto(changedUrl, comment);
