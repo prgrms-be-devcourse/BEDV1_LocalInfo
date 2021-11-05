@@ -7,11 +7,11 @@ import com.kdt.localinfo.post.entity.Post;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -69,5 +69,9 @@ public class User extends BaseEntity {
 
     public void setRegion(Region region) {
         this.region = region;
+    }
+
+    public void deleteUser() {
+        this.deletedAt = LocalDateTime.now();
     }
 }

@@ -21,10 +21,6 @@ public class BaseEntity {
     @Column(name = "deleted_at")
     protected LocalDateTime deletedAt;
 
-    public void setDeletedAt(LocalDateTime deletedAt) {
-        this.deletedAt = deletedAt;
-    }
-
     @PrePersist
     void onPrePersist() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
