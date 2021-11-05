@@ -26,6 +26,9 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import java.util.Objects;
 import java.util.Set;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -161,5 +164,31 @@ class UserControllerTest {
                 .accept(MediaTypes.HAL_JSON_VALUE)
                 .contentType(MediaTypes.HAL_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(userRequest)));
+    }
+
+    @Test
+    @DisplayName("유저 삭제")
+    public void deleteUser() throws Exception {
+        Region region = Region.builder()
+                .neighborhood("동천동")
+                .district("수지구")
+                .city("용인시")
+                .build();
+        User user = User.builder()
+                .name("심수현")
+                .nickname("poogle")
+                .email("suhyun@mail.com")
+                .password("1234")
+                .roles(Set.of(Role.valueOf("GENERAL")))
+                .region(region)
+                .build();
+        User savedUser = userRepository.save(user);
+        log.info("[*] savedUser:{}", savedUser);
+        mockMvc.perform(delete(BASE_URL + "/{id}", savedUser.getId())
+                .accept(MediaTypes.HAL_JSON_VALUE))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+        User deletedUser = userRepository.findById(savedUser.getId()).orElseThrow();
+        assertThat(deletedUser.getDeletedAt(), is(notNullValue()));
     }
 }
