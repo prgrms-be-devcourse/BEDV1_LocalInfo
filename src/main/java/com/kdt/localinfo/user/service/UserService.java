@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -36,16 +37,19 @@ public class UserService {
     }
 
     public List<UserResponse> getUserList() {
-        return userRepository.findAll()
-                .stream()
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .filter(user -> user.getDeletedAt() == null)
                 .map(UserResponse::new)
                 .collect(Collectors.toList());
     }
 
     public UserResponse getUser(Long id) {
-        return userRepository.findById(id)
-                .map(UserResponse::new)
-                .orElseThrow(() -> new EntityNotFoundException("해당 유저가 존재하지 않습니다."));
+        Optional<User> user = userRepository.findById(id);
+        if (user.isEmpty() || user.get().getDeletedAt() != null) {
+            throw new EntityNotFoundException("해당 유저가 존재하지 않습니다.");
+        }
+        return new UserResponse(user.get());
     }
 
     @Transactional
