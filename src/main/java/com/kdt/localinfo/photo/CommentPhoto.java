@@ -1,11 +1,13 @@
 package com.kdt.localinfo.photo;
 
 import com.kdt.localinfo.comment.entity.Comment;
+import com.kdt.localinfo.common.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
@@ -13,7 +15,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @Table(name = "comment_photos")
 @Entity
-public class CommentPhoto {
+public class CommentPhoto extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,5 +40,9 @@ public class CommentPhoto {
         }
         this.comment = comment;
         comment.getCommentPhotos().add(this);
+    }
+
+    public void deleteCommentPhoto() {
+        deletedAt = LocalDateTime.now();
     }
 }
