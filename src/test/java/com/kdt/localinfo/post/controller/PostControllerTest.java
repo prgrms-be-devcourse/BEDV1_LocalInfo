@@ -1,10 +1,16 @@
 package com.kdt.localinfo.post.controller;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kdt.localinfo.category.Category;
 import com.kdt.localinfo.category.CategoryRepository;
+import com.kdt.localinfo.photo.Photo;
 import com.kdt.localinfo.post.dto.PostCreateRequest;
+import com.kdt.localinfo.post.dto.PostResponse;
 import com.kdt.localinfo.post.dto.PostUpdateRequest;
+import com.kdt.localinfo.post.entity.Post;
+import com.kdt.localinfo.post.repository.PostRepository;
 import com.kdt.localinfo.post.service.PostService;
 import com.kdt.localinfo.user.entity.Region;
 import com.kdt.localinfo.user.entity.User;
@@ -18,6 +24,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,11 +93,19 @@ class PostControllerTest {
         List<MultipartFile> multipartFiles = new ArrayList<>();
         postCreateRequest = PostCreateRequest.builder()
                 .contents("this is sample post")
-                .categoryId(String.valueOf(savedCategory1.getId()))
-                .userId(String.valueOf(savedUser.getId()))
+                .categoryId(savedCategory1.getId())
+                .userId(savedUser.getId())
                 .build();
 
-        savedPostId = postService.savePost(postCreateRequest);
+        File imageFile = new File(System.getProperty("user.dir") + "/post-photo/test.png");
+        log.info("file path :: {}", imageFile.toPath());
+        MockMultipartFile file = new MockMultipartFile("images", "test.png",
+                null, Files.readAllBytes(imageFile.toPath()));
+
+        List<MultipartFile> photos = new ArrayList<>();
+        photos.add(file);
+
+        savedPostId = postService.savePost(postCreateRequest, photos).getId();
     }
 
 //    @Test

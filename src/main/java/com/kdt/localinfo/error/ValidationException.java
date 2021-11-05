@@ -1,4 +1,4 @@
-package com.kdt.localinfo.common;
+package com.kdt.localinfo.error;
 
 import lombok.Getter;
 import org.springframework.validation.Errors;

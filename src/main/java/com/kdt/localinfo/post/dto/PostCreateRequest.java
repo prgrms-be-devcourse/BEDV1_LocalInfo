@@ -13,9 +13,7 @@ import java.util.List;
 public class PostCreateRequest {
 
     private String contents;
-    private String categoryId;
-    private String userId;
-    private List<MultipartFile> photos;
-
+    private Long categoryId;
+    private Long userId;
 
 }

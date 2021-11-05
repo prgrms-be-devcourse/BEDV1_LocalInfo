@@ -5,6 +5,8 @@ import com.kdt.localinfo.post.dto.PostResponse;
 import com.kdt.localinfo.post.dto.PostUpdateRequest;
 import com.kdt.localinfo.post.service.PostService;
 import javassist.NotFoundException;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +14,11 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @RestController
+@RequestMapping(produces = MediaTypes.HAL_JSON_VALUE)
 public class PostController {
 
     private final PostService postService;
@@ -21,11 +27,21 @@ public class PostController {
         this.postService = postService;
     }
 
-    @PostMapping(value = "/posts", consumes = {"multipart/form-data"})
-    public ResponseEntity<Void> write(@ModelAttribute PostCreateRequest request) throws IOException, NotFoundException {
-        Long postId = postService.savePost(request);
+    @PostMapping(value = "/posts", produces = MediaTypes.HAL_JSON_VALUE, consumes = MediaTypes.HAL_JSON_VALUE)
+    public ResponseEntity<EntityModel<PostResponse>> write(
+            @RequestParam(value = "images", required = false) List<MultipartFile> multipartFiles,
+            @RequestBody @Validated PostCreateRequest request,
+            Errors errors) throws IOException, NotFoundException {
+        if  (errors.hasErrors()) {
+            throw new ValidationException("PostCreateRequest Invalid Input", errors);
+        }
+        PostResponse postResponse = postService.savePost(request, multipartFiles);
+        URI createdUri = linkTo(methodOn(PostController.class).write(multipartFiles, request, errors)).toUri();
 
-        return ResponseEntity.created(URI.create("/api/posts/" + postId)).build();
+        EntityModel<PostResponse> entityModel = EntityModel.of(postResponse,
+                linkTo(methodOn(PostController.class).write(multipartFiles, request, errors)).withSelfRel(),
+                linkTo(methodOn(PostController.class).findPostsByCategory(request.getCategoryId())).withRel("all posts"));
+        return ResponseEntity.created(createdUri).body(entityModel);
     }
 
     @GetMapping("posts/{post-id}")

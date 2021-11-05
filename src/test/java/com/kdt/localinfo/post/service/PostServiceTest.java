@@ -74,11 +74,11 @@ class PostServiceTest {
 
         postCreateRequest = PostCreateRequest.builder()
                 .contents("this is sample post")
-                .categoryId(String.valueOf(savedCategory1.getId()))
-                .userId(String.valueOf(savedUser.getId()))
+                .categoryId(savedCategory1.getId())
+                .userId(savedUser.getId())
                 .build();
 
-        savedPostId = postService.savePost(postCreateRequest);
+        savedPostId = postService.savePost(postCreateRequest, multipartFiles).getId();
     }
 
     @Test

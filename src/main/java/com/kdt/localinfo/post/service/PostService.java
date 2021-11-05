@@ -1,5 +1,6 @@
 package com.kdt.localinfo.post.service;
 
+import com.kdt.localinfo.aws.service.AwsS3Service;
 import com.kdt.localinfo.category.Category;
 import com.kdt.localinfo.category.CategoryRepository;
 import com.kdt.localinfo.comment.entity.Comment;
@@ -20,7 +21,6 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,8 +37,8 @@ public class PostService {
     private final CommentRepository commentRepository;
     private final S3Service s3Service;
 
-    public PostService(PostRepository postRepository, S3Service s3Service, UserRepository userRepository,
-                       CategoryRepository categoryRepository, CommentRepository commentRepository) {
+    public PostService(PostRepository postRepository, AwsS3Service awsS3Service, UserRepository userRepository,
+                       CategoryRepository categoryRepository, CommentRepository commentRepository, PhotoRepository photoRepository) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
@@ -47,20 +47,12 @@ public class PostService {
     }
 
     @Transactional
-    public Post createPost(PostCreateRequest request) throws IOException, NotFoundException {
-        List<MultipartFile> multipartFiles = request.getPhotos();
-
-        List<Photo> photos = new ArrayList<>();
-
-        if (!Objects.isNull(multipartFiles)) {
-            for (MultipartFile photo : multipartFiles) {
-                Photo photoEntity = Photo.builder()
-                        .url(s3Service.upload(photo))
-                        .build();
-                photos.add(photoEntity);
-            }
-        }
-
+    public Post createPost(PostCreateRequest request, List<MultipartFile> multipartFiles) throws IOException, NotFoundException {
+        Long userId = Long.valueOf(request.getUserId());
+        userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_MESSAGE_USER));
+        List<Photo> postPhotos = fileUpload(multipartFiles);
+        List<Photo> savedPhotos = photoRepository.saveAll(postPhotos);
         User user = userRepository.findById(Long.valueOf(request.getUserId()))
                 .orElseThrow(() -> new NotFoundException(NOT_FOUND_MESSAGE_USER));
 
@@ -71,22 +63,31 @@ public class PostService {
                 .contents(request.getContents())
                 .category(category)
                 .user(user)
-                .photos(photos)
+                .photos(savedPhotos)
                 .build();
     }
 
     @Transactional
-    public Long savePost(PostCreateRequest request) throws IOException, NotFoundException {
-        Post post = createPost(request);
+    public PostResponse savePost(PostCreateRequest request, List<MultipartFile> multipartFiles) throws IOException, NotFoundException {
+        Post post = createPost(request, multipartFiles);
         Post savedPost = postRepository.save(post);
-        return savedPost.getId();
+
+        return PostResponse.of(post);
     }
 
     @Transactional
     public PostResponse findDetailPost(Long postId) throws NotFoundException {
-        return PostResponse.of(postRepository.findById(postId)
-                .filter(foundPost -> foundPost.getDeletedAt() == null)
-                .orElseThrow(() -> new NotFoundException(NOT_FOUND_MESSAGE_POST)));
+        Post post = postRepository.findById(postId).filter(foundPost -> foundPost.getDeletedAt() == null)
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_MESSAGE_POST));
+
+        List<Comment> comments = commentRepository.findCommentsByPostId(postId);
+        post.setComments(comments);
+
+        User user = userRepository.findById(post.getUser().getId())
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_MESSAGE_USER));
+        post.setUser(user);
+
+        return PostResponse.of(post);
     }
 
     @Transactional

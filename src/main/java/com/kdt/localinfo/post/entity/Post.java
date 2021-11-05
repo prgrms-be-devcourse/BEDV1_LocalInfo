@@ -57,18 +57,7 @@ public class Post extends BaseEntity {
     public Post(String contents, User user, List<Photo> photos, Category category) {
         this.contents = contents;
         this.region = user.getRegion();
-        this.user = user;
-        this.photos = photos;
-        this.category = category;
-        setCategory(category);
-    }
-
-    @Builder
-    public Post(Long id, String contents, Region region, Category category, User user, List<Photo> photos) {
-        this.id = id;
-        this.contents = contents;
-        this.region = region;
-        this.user = user;
+        setUser(user);
         this.photos = photos;
         this.category = category;
         setCategory(category);
