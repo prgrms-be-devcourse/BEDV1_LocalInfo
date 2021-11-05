@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class UserControllerTest {
 
-    private final String BASE_URL = "/api/users";
+    private final String BASE_URL = "/users";
 
     @Autowired
     MockMvc mockMvc;

@@ -21,7 +21,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping(value = "/api/users", produces = MediaTypes.HAL_JSON_VALUE)
+@RequestMapping(value = "/users", produces = MediaTypes.HAL_JSON_VALUE)
 public class UserController {
 
     private final UserService userService;
