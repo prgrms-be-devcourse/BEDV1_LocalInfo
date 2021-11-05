@@ -2,6 +2,7 @@ package com.kdt.localinfo.comment.service;
 
 import com.kdt.localinfo.aws.service.AwsS3Service;
 import com.kdt.localinfo.comment.converter.CommentConverter;
+import com.kdt.localinfo.comment.dto.CommentChangeRequest;
 import com.kdt.localinfo.comment.dto.CommentDepth;
 import com.kdt.localinfo.comment.dto.CommentResponse;
 import com.kdt.localinfo.comment.dto.CommentSaveRequest;
@@ -90,7 +91,6 @@ class CommentServiceTest {
         List<CommentPhoto> commentPhotos = new ArrayList<>();
         commentPhotos.add(commentPhoto);
 
-        given(commentRepository.save(comment)).willReturn(comment);
         given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
         given(postRepository.findById(post.getId())).willReturn(Optional.of(post));
         given(commentConverter.converterToComment(commentSaveRequest, user, post)).willReturn(comment);
@@ -159,6 +159,49 @@ class CommentServiceTest {
             assertThat(commentResponse1.getContents(), is("댓글"));
             assertThat(commentResponse1.getUrls(), is(urls));
         });
+    }
+
+    @Test
+    @DisplayName("게시글 아이디로 댓글 조회 Service")
+    void changedCommentTest() throws IOException {
+        // GIVEN
+        Comment comment = TestEntityFactory.commentBuilder().build();
+        User user = comment.getUser();
+
+        String changedUrl = "2544a8cf-b522-48f4-915a-6425018c5957-changedTest.jpg";
+        Path directoryPath = Paths.get("comment-photo");
+        File imageFile = new File(directoryPath + "\\test.jpg");
+        MockMultipartFile changedFile = new MockMultipartFile("images", "changeTest.jpg", null, Files.readAllBytes(imageFile.toPath()));
+
+        CommentPhoto commentPhoto = new CommentPhoto(changedUrl, comment);
+
+        CommentChangeRequest commentChangeRequest = new CommentChangeRequest(comment.getId(), "수정된 내용", commentPhoto.getCommentPhotoId());
+
+        CommentResponse expectCommentResponse = new CommentResponse(comment.getId(),
+                "수정된 내용.",
+                user.getNickname(),
+                LocalDateTime.now(),
+                user.getRegion().getNeighborhood(),
+                null,
+                checkedDepth(comment.getParentId()),
+                List.of(changedUrl));
+
+        given(commentRepository.findById(commentChangeRequest.getCommentId())).willReturn(Optional.of(comment));
+        given(commentPhotoRepository.findAllByCommentId(comment.getId())).willReturn(List.of(commentPhoto));
+        given(s3Uploader.upload(changedFile, "comment-photo")).willReturn(changedUrl);
+        given(commentConverter.converterToCommentResponse(comment, List.of(changedUrl))).willReturn(expectCommentResponse);
+
+        // WHEN
+        CommentResponse commentResponse = commentService.changeComment(List.of(changedFile), commentChangeRequest);
+
+        // THEN
+        assertThat(commentResponse.getId(), is(expectCommentResponse.getId()));
+        assertThat(commentResponse.getContents(), is(expectCommentResponse.getContents()));
+        assertThat(commentResponse.getParentId(), is(expectCommentResponse.getParentId()));
+        assertThat(commentResponse.getDepth(), is(expectCommentResponse.getDepth()));
+        assertThat(commentResponse.getRegion(), is(expectCommentResponse.getRegion()));
+        assertThat(commentResponse.getNickName(), is(expectCommentResponse.getNickName()));
+        assertThat(commentResponse.getUrls(), is(expectCommentResponse.getUrls()));
     }
 
     private Long checkedDepth(Long parentId) {
