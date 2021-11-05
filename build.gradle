@@ -64,6 +64,18 @@ jacocoTestReport {
         html.enabled true
         html.destination file("$buildDir/jacocoHtml")
     }
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    excludes: [
+                            '**/com/kdt/localinfo/error/**',
+                            '**/com/kdt/localinfo/common/**',
+                            '**/com/kdt/localinfo/aws/**'
+                    ]
+            )
+        }))
+    }
+
     finalizedBy 'jacocoTestCoverageVerification'
 }
 
