@@ -9,7 +9,7 @@
 - 관심 주제별로 게시물을 필터링해서 게시물을 조회할 수 있습니다.
 - 원하는 게시물에 댓글을 달아 의견을 나눌 수 있습니다.
 
-### Rerence - 당근마켓 - 동네생활
+### ✳ Reference - 당근마켓 - 동네생활
 
 ![image](https://user-images.githubusercontent.com/58318786/140740362-6aec1806-28cf-4c24-9285-584705efad76.png)
 
