@@ -18,6 +18,12 @@
 
 <br>
 
+## ERD
+
+![스크린샷, 2021-11-08 21-29-42](https://user-images.githubusercontent.com/58318786/140742444-400a35f6-17d6-45e5-896d-8b5d30408513.png)
+
+<br>
+
 ## 🛠 기술스택
 ![image](https://user-images.githubusercontent.com/58318786/140695790-57a23ecc-5942-4ef7-bbc5-4c9d312a6633.png)
 
